@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="dark" lang="pt-br">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <meta name="theme-color" content="#0b1326">
+    <title>Yvy Poty - Portaria Automática</title>
+    
+    <!-- Material Symbols & Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Geist:wght@400;600;700&display=swap" rel="stylesheet"/>
+    
+    <!-- Firebase (Backend) e Html5Qrcode (Câmera) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <!-- Tailwind CSS com a sua paleta oficial -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#31394d", "tertiary-container": "#5e6163", "on-error": "#690005",
+                        "primary-fixed-dim": "#c3c0ff", "on-primary": "#1d00a5", "background": "#0b1326",
+                        "on-error-container": "#ffdad6", "primary-container": "#4f46e5", "surface-tint": "#c3c0ff",
+                        "secondary-fixed": "#6ffbbe", "on-secondary": "#003824", "on-surface": "#dae2fd",
+                        "surface-container-highest": "#2d3449", "outline-variant": "#464555", "surface-container-high": "#222a3d",
+                        "secondary": "#4edea3", "on-background": "#dae2fd", "on-primary-fixed-variant": "#3323cc",
+                        "on-primary-container": "#dad7ff", "primary": "#c3c0ff", "on-tertiary": "#2d3133",
+                        "on-tertiary-container": "#dadcde", "on-secondary-fixed": "#002113", "secondary-container": "#00a572",
+                        "on-primary-fixed": "#0f0069", "on-secondary-container": "#00311f", "surface-container": "#171f33",
+                        "inverse-on-surface": "#283044", "error-container": "#93000a", "secondary-fixed-dim": "#4edea3",
+                        "on-tertiary-fixed-variant": "#444749", "outline": "#918fa1", "surface-container-lowest": "#060e20",
+                        "primary-fixed": "#e2dfff", "inverse-primary": "#4d44e3", "on-tertiary-fixed": "#191c1e",
+                        "tertiary-fixed": "#e0e3e5", "inverse-surface": "#dae2fd", "error": "#ffb4ab",
+                        "surface": "#0b1326", "on-surface-variant": "#c7c4d8", "tertiary": "#c4c7c9",
+                        "tertiary-fixed-dim": "#c4c7c9", "surface-variant": "#2d3449", "surface-container-low": "#131b2e",
+                        "surface-dim": "#0b1326", "on-secondary-fixed-variant": "#005236"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"], "body-lg": ["Inter"], "headline-lg": ["Inter"],
+                        "label-caps": ["Geist"], "stat-value": ["Geist"], "headline-lg-mobile": ["Inter"],
+                        "headline-md": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        body { min-height: 100dvh; }
+
+        /* Ajustes da Câmera */
+        #reader { border: none !important; border-radius: 12px; overflow: hidden; background: #000; }
+        #reader video { object-fit: cover !important; width: 100% !important; height: 100% !important; border-radius: 12px; }
+        #reader__dashboard_section_csr span { color: #c3c0ff !important; }
+        #reader button { background: #4f46e5; color: white; padding: 10px; border-radius: 8px; border: none; font-weight: bold; margin-top: 10px; cursor: pointer; }
+
+        /* Estilo 3D Neumorphism para o Relatório */
+        .box-3d {
+            background: linear-gradient(145deg, #151e33, #111829);
+            box-shadow: inset 5px 5px 15px rgba(0,0,0,0.6), inset -5px -5px 15px rgba(255,255,255,0.05),
+                        0 10px 20px rgba(0,0,0,0.5);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-3d {
+            background: #171f33;
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.4), -2px -2px 8px rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.05);
+            transform: translateZ(0);
+            transition: all 0.3s ease;
+        }
+        .card-3d:hover { transform: translateY(-2px); box-shadow: 6px 6px 15px rgba(0,0,0,0.5), -2px -2px 10px rgba(255,255,255,0.08); }
+        
+        /* Barra de Rolagem Customizada */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #464555; border-radius: 10px; }
+
+        /* Animação do Scanner */
+        .scan-line { height: 2px; width: 100%; background: linear-gradient(to right, transparent, #4edea3, transparent); position: absolute; animation: scan-line 2s linear infinite; z-index: 10; box-shadow: 0 0 10px #4edea3; }
+        @keyframes scan-line { 0% { top: 0%; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+        /* Toast 3D */
+        .toast-3d { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-150px); background: #00a572; color: white; padding: 12px 24px; border-radius: 50px; font-weight: bold; box-shadow: 0 10px 25px rgba(0,165,114,0.5), inset 0 2px 5px rgba(255,255,255,0.3); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 100; display: flex; align-items: center; gap: 8px; }
+        .toast-3d.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-lg min-h-screen flex flex-col overflow-hidden">
+
+    <!-- TopAppBar -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-background border-b border-outline-variant flex items-center justify-between px-4 h-16 shadow-none">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-3xl">qr_code_scanner</span>
+            <h1 class="font-headline-md font-bold text-primary tracking-wide">Yvy Poty <span class="text-xs text-on-surface-variant font-normal uppercase"></span></h1>
+        </div>
+        <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" onclick="toggleFullscreen()">
+            <span class="material-symbols-outlined text-on-surface-variant">fullscreen</span>
+        </button>
+    </header>
+
+    <!-- Alerta de Sucesso -->
+    <div id="toast" class="toast-3d">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span id="toast-msg">Leitura Registrada!</span>
+    </div>
+
+    <!-- Main Content Canvas -->
+    <main class="flex-1 mt-16 p-4 flex flex-col gap-5 overflow-y-auto custom-scrollbar pb-6">
+        
+        <!-- SELETOR DE MODO (ENTRADA / SAÍDA) -->
+        <div class="bg-surface-container-high p-1 rounded-xl flex gap-1 shadow-lg border border-outline-variant/30 shrink-0">
+            <button id="btn-entrada" onclick="setModo('entrada')" class="flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all bg-secondary-container text-on-secondary-container shadow-[inset_0_2px_5px_rgba(255,255,255,0.3)]">
+                <span class="material-symbols-outlined">login</span> ENTRADA
+            </button>
+            <button id="btn-saida" onclick="setModo('saida')" class="flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all text-on-surface hover:bg-surface-variant">
+                <span class="material-symbols-outlined">logout</span> SAÍDA
+            </button>
+        </div>
+
+        <!-- CÂMERA (VIEWPORT) -->
+        <section class="relative w-full max-w-sm mx-auto aspect-square overflow-hidden rounded-2xl border-2 border-outline-variant bg-surface-container-lowest shadow-[0_10px_30px_rgba(0,0,0,0.5)] shrink-0">
+            <div class="w-full h-full" id="reader"></div>
+            <!-- Decoração de Scan -->
+            <div class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
+                <div class="w-4/5 h-4/5 relative">
+                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-secondary rounded-tl-lg"></div>
+                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-secondary rounded-tr-lg"></div>
+                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-secondary rounded-bl-lg"></div>
+                    <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-secondary rounded-br-lg"></div>
+                    <div class="scan-line" id="scan-line-anim"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAMPO 3D: RELATÓRIO EM TEMPO REAL -->
+        <div class="box-3d rounded-2xl p-4 flex flex-col flex-1 min-h-[200px]">
+            <h3 class="text-sm font-bold text-primary mb-3 uppercase tracking-wider flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">history</span> Últimos Registros
+            </h3>
+            <ul id="log-list" class="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-1">
+                <!-- Itens injetados via JS -->
+                <li class="text-center text-on-surface-variant text-sm mt-4 italic opacity-50" id="empty-log">Aguardando leituras...</li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        // =======================================================
+        // 1. FIREBASE (COLE SUAS CHAVES AQUI ANTES DE IR PARA O GITHUB)
+        // =======================================================
+        const firebaseConfig = {
+  apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
+  authDomain: "monitora-yvypoty.firebaseapp.com",
+  projectId: "monitora-yvypoty",
+  storageBucket: "monitora-yvypoty.firebasestorage.app",
+  messagingSenderId: "778447943661",
+  appId: "1:778447943661:web:a128b7f140bcd9629919e4"
+        };
+        
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.firestore();
+
+        // =======================================================
+        // 2. ESTADO DO SISTEMA E MODO DE OPERAÇÃO
+        // =======================================================
+        let modoAtual = 'entrada'; // Começa no modo entrada
+        let ultimoQRLido = '';
+        let tempoUltimaLeitura = 0;
+
+        function setModo(modo) {
+            modoAtual = modo;
+            const btnEntrada = document.getElementById('btn-entrada');
+            const btnSaida = document.getElementById('btn-saida');
+            const scanLine = document.getElementById('scan-line-anim');
+
+            if (modo === 'entrada') {
+                // Ativa botão de Entrada (Verde/Secondary)
+                btnEntrada.className = "flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all bg-secondary-container text-on-secondary-container shadow-[inset_0_2px_5px_rgba(255,255,255,0.3)]";
+                btnSaida.className = "flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all text-on-surface hover:bg-surface-variant";
+                scanLine.style.background = "linear-gradient(to right, transparent, #00a572, transparent)";
+                scanLine.style.boxShadow = "0 0 10px #00a572";
+            } else {
+                // Ativa botão de Saída (Laranja/Warning adaptado)
+                btnSaida.className = "flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all bg-orange-600 text-white shadow-[inset_0_2px_5px_rgba(255,255,255,0.3)]";
+                btnEntrada.className = "flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all text-on-surface hover:bg-surface-variant";
+                scanLine.style.background = "linear-gradient(to right, transparent, #ea580c, transparent)";
+                scanLine.style.boxShadow = "0 0 10px #ea580c";
+            }
+        }
+
+        // =======================================================
+        // 3. TELA CHEIA
+        // =======================================================
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Erro ao tentar tela cheia: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // =======================================================
+        // 4. LÓGICA DE LEITURA (CÂMERA E BIP AUTOMÁTICO)
+        // =======================================================
+        const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+            fps: 10, 
+            qrbox: {width: 250, height: 250},
+            aspectRatio: 1.0 
+        }, false);
+
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+        function onScanSuccess(decodedText) {
+            const agora = Date.now();
+            
+            // Trava de segurança: Evita ler o mesmo QR 10x no mesmo segundo. Aguarda 4 segundos.
+            if (decodedText === ultimoQRLido && (agora - tempoUltimaLeitura) < 4000) {
+                return;
+            }
+
+            ultimoQRLido = decodedText;
+            tempoUltimaLeitura = agora;
+
+            // Bip Automático do Celular (Vibração)
+            try { navigator.vibrate([200, 100, 200]); } catch(e){}
+
+            // Registra no Firebase usando o modo que estiver selecionado lá em cima
+            enviarParaFirebase(decodedText, modoAtual);
+        }
+
+        function onScanFailure(error) { /* Fica em silêncio enquanto não encontra nada */ }
+
+        // =======================================================
+        // 5. INTEGRAÇÃO FIREBASE E RELATÓRIO 3D
+        // =======================================================
+        function enviarParaFirebase(idLido, tipoOperacao) {
+            let horaFormatada = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+            db.collection("registos_acesso").add({
+                idAluno: idLido,
+                tipo: tipoOperacao,
+                hora: horaFormatada,
+                notificado: false // Robô local aguarda por isto
+            }).then(() => {
+                mostrarAlerta(`QR Lido: ${tipoOperacao.toUpperCase()}`);
+                adicionarAoLog3D(idLido, tipoOperacao, horaFormatada);
+            }).catch((error) => {
+                mostrarAlerta("Erro de Conexão!");
+                console.error(error);
+            });
+        }
+
+        function adicionarAoLog3D(id, tipo, hora) {
+            const lista = document.getElementById('log-list');
+            const empty = document.getElementById('empty-log');
+            if(empty) empty.remove();
+
+            const isEntrada = tipo === 'entrada';
+            const corBorda = isEntrada ? 'border-l-secondary-container' : 'border-l-orange-500';
+            const icone = isEntrada ? 'login' : 'logout';
+            const corIcone = isEntrada ? 'text-secondary-container' : 'text-orange-500';
+
+            const li = document.createElement('li');
+            li.className = `card-3d rounded-xl p-3 flex justify-between items-center border-l-4 ${corBorda}`;
+            li.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shadow-inner">
+                        <span class="material-symbols-outlined ${corIcone}">${icone}</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-on-surface text-sm uppercase">ID: ${id}</p>
+                        <p class="text-xs text-on-surface-variant font-medium">${tipo.toUpperCase()}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-lg font-stat-value text-primary">${hora}</p>
+                    <p class="text-[10px] text-secondary flex items-center gap-1 justify-end"><span class="material-symbols-outlined text-[12px]">cloud_done</span> Nuvem</p>
+                </div>
+            `;
+            
+            // Adiciona no topo
+            lista.prepend(li);
+        }
+
+        function mostrarAlerta(msg) {
+            const alerta = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            
+            // Muda a cor do alerta dependendo do modo
+            if(modoAtual === 'entrada') {
+                alerta.style.background = '#00a572';
+                alerta.style.boxShadow = '0 10px 25px rgba(0,165,114,0.5), inset 0 2px 5px rgba(255,255,255,0.3)';
+            } else {
+                alerta.style.background = '#ea580c';
+                alerta.style.boxShadow = '0 10px 25px rgba(234,88,12,0.5), inset 0 2px 5px rgba(255,255,255,0.3)';
+            }
+
+            alerta.classList.add('show');
+            setTimeout(() => alerta.classList.remove('show'), 2500);
+        }
+    </script>
+</body>
+</html>

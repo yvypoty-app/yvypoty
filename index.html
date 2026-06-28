@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yvy Poty - Monitoramento</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        /* TOKENS E TEMA BASE */
+        :root {
+            --primary: #4f46e5; --success: #10b981; --warning: #f59e0b; --orange: #f97316;
+            --bg-body: #0f172a; --bg-surface: #1e293b;
+            --text-main: #f8fafc; --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background-color: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+
+        /* HEADER */
+        .top-nav { background: var(--bg-surface); padding: 20px 30px; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
+        .top-nav h3 { font-family: 'Syne', sans-serif; font-size: 22px; color: var(--primary); display: flex; align-items: center; gap: 10px;}
+
+        /* MAIN LAYOUT */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .admin-grid { display: grid; grid-template-columns: 300px 1fr; gap: 30px; align-items: start; height: 100%; }
+        
+        @media (max-width: 900px) {
+            .admin-grid { grid-template-columns: 1fr; }
+        }
+
+        /* PAINEL ESQUERDO (TURMAS) */
+        .panel-left { background: var(--warning); padding: 25px; border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 25px rgba(245,158,11,0.2);}
+        .panel-left h3 { margin-bottom: 20px; font-weight: 800; }
+        .turmas-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; background: rgba(255,255,255,0.2); padding: 15px; border-radius: 15px;}
+        .btn-turma { background: #cbd5e1; color: #334155; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-turma:hover { background: white; }
+        .btn-turma.selecionada { background: var(--primary); color: white; box-shadow: 0 0 15px rgba(0,0,0,0.4); }
+        
+        /* TABELA DE HISTÓRICO */
+        .panel-right { background: var(--bg-surface); padding: 25px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 500px; overflow-y: auto; max-height: calc(100vh - 150px);}
+        .tabela-historico { width: 100%; border-collapse: collapse; }
+        .tabela-historico th, .tabela-historico td { padding: 18px 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        .tabela-historico th { color: var(--text-muted); text-transform: uppercase; font-size: 13px; letter-spacing: 1px;}
+        .tabela-historico tr:hover td { background: rgba(255,255,255,0.02); }
+        .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; background: rgba(16,185,129,0.15); color: var(--success); display: inline-flex; align-items: center; gap: 5px;}
+        
+        /* WIDGET FLUTUANTE NO CANTO */
+        .widget-presentes {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            padding: 15px 25px;
+            border-radius: 30px;
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .widget-presentes:hover { transform: translateY(-5px) scale(1.05); }
+        .widget-num { font-size: 32px; font-weight: 800; font-family: 'Syne', sans-serif; line-height: 1;}
+        .widget-text { display: flex; flex-direction: column; }
+        .widget-text span:first-child { font-size: 14px; font-weight: 700; }
+        .widget-text span:last-child { font-size: 10px; color: #cbd5e1; text-transform: uppercase; }
+
+        /* MODAL DE RELATÓRIO */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center; z-index: 999;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-content {
+            background: var(--bg-surface); padding: 40px; border-radius: 24px; border: 1px solid var(--border);
+            width: 90%; max-width: 450px; text-align: center; position: relative;
+            transform: translateY(20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .btn-close { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+        .btn-close:hover { color: white; }
+        
+        .modal-title { font-family: 'Syne', sans-serif; font-size: 24px; margin-bottom: 30px; color: var(--primary); }
+        .relatorio-grid { display: flex; flex-direction: column; gap: 15px; }
+        .rel-card { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;}
+        .rel-card .label { color: var(--text-muted); font-weight: 600; font-size: 14px; }
+        .rel-card .valor { font-size: 24px; font-weight: 800; color: white; }
+
+    </style>
+</head>
+<body>
+
+    <!-- CABEÇALHO LISINHO -->
+    <div class="top-nav">
+        <h3><ion-icon name="analytics-outline"></ion-icon> Yvy Poty - Painel Administrativo</h3>
+    </div>
+
+    <!-- WIDGET FLUTUANTE (CANTO INFERIOR DIREITO) -->
+    <div class="widget-presentes" onclick="abrirRelatorio()">
+        <div class="widget-num" id="widget-qtd">0</div>
+        <div class="widget-text">
+            <span>Alunos Presentes</span>
+            <span>Clique para Relatórios</span>
+        </div>
+    </div>
+
+    <!-- MODAL DO RELATÓRIO (OCULTO POR PADRÃO) -->
+    <div class="modal-overlay" id="modal-relatorio" onclick="fecharModal(event)">
+        <div class="modal-content">
+            <button class="btn-close" onclick="document.getElementById('modal-relatorio').classList.remove('active')"><ion-icon name="close-outline"></ion-icon></button>
+            <h2 class="modal-title">Relatório de Frequência</h2>
+            <div class="relatorio-grid">
+                <div class="rel-card">
+                    <span class="label">Média Diária</span>
+                    <span class="valor" style="color: #10b981;">143</span>
+                </div>
+                <div class="rel-card">
+                    <span class="label">Total na Semana</span>
+                    <span class="valor" style="color: #3b82f6;">715</span>
+                </div>
+                <div class="rel-card">
+                    <span class="label">Total no Mês</span>
+                    <span class="valor" style="color: #f59e0b;">2.850</span>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-size: 12px; color: var(--text-muted);">* Os dados estatísticos são calculados com base no mês corrente.</p>
+        </div>
+    </div>
+
+    <!-- CORPO PRINCIPAL -->
+    <div class="main-content">
+        <div class="admin-grid">
+            
+            <!-- Esquerda: Laranja com Turmas -->
+            <div class="panel-left">
+                <h3>Filtro de Turmas</h3>
+                <div class="turmas-container">
+                    <button class="btn-turma" onclick="filtrarTurma('1º A', this)">1º A</button>
+                    <button class="btn-turma" onclick="filtrarTurma('1º B', this)">1º B</button>
+                    <button class="btn-turma" onclick="filtrarTurma('2º A', this)">2º A</button>
+                    <button class="btn-turma" onclick="filtrarTurma('2º B', this)">2º B</button>
+                    <button class="btn-turma" onclick="filtrarTurma('2º C', this)">2º C</button>
+                    <button class="btn-turma" onclick="filtrarTurma('3º A', this)">3º A</button>
+                    <button class="btn-turma" onclick="filtrarTurma('3º B', this)">3º B</button>
+                    <button class="btn-turma" onclick="filtrarTurma('3º C', this)">3º C</button>
+                </div>
+                <button class="btn-turma" style="width: 100%; background: #fff;" onclick="filtrarTurma(null, this)">Limpar Filtro / Ver Geral</button>
+            </div>
+
+            <!-- Direita: Histórico -->
+            <div class="panel-right">
+                <h2 style="margin-bottom: 25px; color: white;" id="titulo-tabela">Histórico Geral de Entrada/Saída</h2>
+                <table class="tabela-historico">
+                    <thead>
+                        <tr>
+                            <th>Aluno</th>
+                            <th>Turma</th>
+                            <th>Hora</th>
+                            <th>Status</th>
+                            <th>Nuvem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-historico">
+                        <!-- JS preenche aqui -->
+                        <tr><td colspan="5" style="text-align:center; color: #64748b;">Carregando dados da nuvem...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =======================================================
+        // 1. FIREBASE (COLE SUAS CHAVES AQUI)
+        // =======================================================
+        const firebaseConfig = {
+  apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
+  authDomain: "monitora-yvypoty.firebaseapp.com",
+  projectId: "monitora-yvypoty",
+  storageBucket: "monitora-yvypoty.firebasestorage.app",
+  messagingSenderId: "778447943661",
+  appId: "1:778447943661:web:a128b7f140bcd9629919e4"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.firestore();
+
+        // =======================================================
+        // 2. BANCO DE DADOS LOCAL (PARA OS NOMES DOS ALUNOS)
+        // =======================================================
+        const databaseAlunos = {
+            "2026001": { nome: "Ana Silva", turma: "1º A" },
+            "2026002": { nome: "Bruno Costa", turma: "1º B" },
+            "003": { nome: "Carlos Sousa", turma: "2º A" },
+            "004": { nome: "Diana Lima", turma: "2º B" },
+            "005": { nome: "Eduardo Gomes", turma: "3º A" }
+        };
+
+        // =======================================================
+        // 3. LÓGICA DE INTERFACE
+        // =======================================================
+        let historicoGeral = [];
+        let filtroAtual = null;
+
+        function abrirRelatorio() {
+            document.getElementById('modal-relatorio').classList.add('active');
+        }
+
+        function fecharModal(e) {
+            // Fecha se clicar fora da caixa branca
+            if(e.target.id === 'modal-relatorio') {
+                e.target.classList.remove('active');
+            }
+        }
+
+        function filtrarTurma(turma, btnElement) {
+            filtroAtual = turma;
+            
+            // Remove classe de todos
+            document.querySelectorAll('.btn-turma').forEach(b => b.classList.remove('selecionada'));
+            
+            if(turma) {
+                btnElement.classList.add('selecionada');
+                document.getElementById('titulo-tabela').innerText = `Histórico - Turma: ${turma}`;
+            } else {
+                document.getElementById('titulo-tabela').innerText = `Histórico Geral de Entrada/Saída`;
+            }
+            renderizarTabela();
+        }
+
+        // =======================================================
+        // 4. LER DADOS DO FIREBASE EM TEMPO REAL
+        // =======================================================
+        db.collection("registos_acesso").onSnapshot((snapshot) => {
+            historicoGeral = [];
+            let presentesStatus = {}; 
+
+            snapshot.forEach(doc => {
+                let data = doc.data();
+                historicoGeral.push(data);
+                
+                // Calcula quem está dentro da escola
+                if(data.tipo === 'entrada') presentesStatus[data.idAluno] = true;
+                if(data.tipo === 'saida') presentesStatus[data.idAluno] = false;
+            });
+
+            // Ordena o array para o mais recente ficar no topo (usando a string da hora, ex: "07:15")
+            // Na vida real usar timestamp é melhor, mas como salvou string HH:MM, ordenamos textualmente invertido
+            historicoGeral.sort((a, b) => b.hora.localeCompare(a.hora));
+
+            // Atualiza o Widget Flutuante com o total
+            let totalPresentes = Object.values(presentesStatus).filter(status => status === true).length;
+            document.getElementById('widget-qtd').innerText = totalPresentes;
+
+            renderizarTabela();
+        });
+
+        function renderizarTabela() {
+            const tbody = document.getElementById('tb-historico');
+            tbody.innerHTML = '';
+
+            let logs = filtroAtual 
+                ? historicoGeral.filter(l => {
+                    let aluno = databaseAlunos[l.idAluno];
+                    return aluno && aluno.turma === filtroAtual;
+                })
+                : historicoGeral;
+
+            if(logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: #64748b;">Nenhum registro encontrado.</td></tr>`;
+                return;
+            }
+
+            logs.forEach(log => {
+                let aluno = databaseAlunos[log.idAluno] || { nome: `ID: ${log.idAluno}`, turma: "Não Cadastrada" };
+                
+                let corTipo = log.tipo === 'entrada' ? 'var(--success)' : 'var(--orange)';
+                let iconTipo = log.tipo === 'entrada' ? 'login' : 'logout';
+                
+                let linha = `<tr>
+                    <td><strong style="color: white;">${aluno.nome}</strong></td>
+                    <td style="color: #94a3b8;">${aluno.turma}</td>
+                    <td style="font-weight: 600;">${log.hora}</td>
+                    <td style="color: ${corTipo}; font-weight: 800; text-transform: uppercase;">
+                        <span style="display:flex; align-items:center; gap:5px;"><ion-icon name="${iconTipo}-outline"></ion-icon> ${log.tipo}</span>
+                    </td>
+                    <td><span class="badge-status"><ion-icon name="checkmark-circle"></ion-icon> Registrado</span></td>
+                </tr>`;
+                tbody.innerHTML += linha;
+            });
+        }
+    </script>
+</body>
+</html>
