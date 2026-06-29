@@ -3,24 +3,17 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Yvy Poty | Painel Administrativo</title>
+    <title>Yvy Poty | Portal de Acesso</title>
     
-    <!-- Material Symbols & Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com" rel="preconnect"/>
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Syne:wght@400..800&display=swap" rel="stylesheet"/>
-    
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
-    <!-- Theme Config (Design Preservado 100%) -->
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    "colors": {
+                    colors: {
                         "outline-variant": "#464554", "surface-container-lowest": "#060e20", "on-surface-variant": "#c7c4d7",
                         "outline": "#908fa0", "tertiary": "#ffb95f", "on-secondary": "#003824", "on-secondary-container": "#00311f",
                         "text-muted": "#94a3b8", "text-main": "#f8fafc", "on-surface": "#dae2fd", "error-container": "#93000a",
@@ -28,215 +21,69 @@
                         "secondary-fixed": "#6ffbbe", "on-error": "#690005", "secondary-fixed-dim": "#4edea3",
                         "on-background": "#dae2fd", "inverse-on-surface": "#283044", "on-error-container": "#ffdad6",
                         "surface-container-highest": "#2d3449", "on-primary-fixed": "#07006c", "primary-container": "#8083ff",
+                        "on-secondary-fixed": "#002113", "secondary": "#4edea3", "tertiary-fixed": "#ffddb8",
+                        "background": "#0b1326", "inverse-primary": "#494bd6", "surface": "#1e293b", "error": "#ffb4ab",
                         "on-primary-container": "#0d0096", "surface-variant": "#2d3449", "danger": "#ef4444",
                         "border": "#334155", "surface-container-high": "#222a3d", "inverse-surface": "#dae2fd",
-                        "tertiary-fixed-dim": "#ffb95f", "tertiary-container": "#ca8100", "secondary-container": "#00a572",
-                        "on-tertiary": "#472a00", "on-tertiary-container": "#3e2400", "surface-container-low": "#131b2e",
-                        "surface-dim": "#0b1326", "surface-container": "#171f33", "on-primary-fixed-variant": "#2f2ebe",
-                        "primary": "#c0c1ff", "primary-fixed": "#e1e0ff", "indigo-glow": "rgba(99, 102, 241, 0.15)",
-                        "on-primary": "#1000a9", "on-tertiary-fixed": "#2a1700"
+                        "tertiary-container": "#ca8100", "secondary-container": "#00a572", "surface-container-low": "#131b2e",
+                        "surface-container": "#171f33", "primary": "#c0c1ff"
                     },
-                    "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
-                    "spacing": { "base": "8px", "sm": "12px", "xl": "48px", "margin-mobile": "16px", "margin-desktop": "40px", "gutter": "24px", "md": "24px", "xs": "4px", "lg": "32px" },
-                    "fontFamily": { "body-lg": ["DM Sans"], "headline-sm": ["Syne"], "display-md": ["Syne"], "label-lg": ["DM Sans"], "label-sm": ["DM Sans"], "body-md": ["DM Sans"], "headline-lg": ["Syne"] }
+                    borderRadius: { "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem" },
+                    fontFamily: { "body-lg": ["DM Sans"], "headline-lg": ["Syne"], "label-sm": ["DM Sans"] }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #0b1326; color: #dae2fd; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glow-indigo { box-shadow: 0 0 30px rgba(99, 102, 241, 0.2); }
-        .glow-amber { box-shadow: 0 0 30px rgba(255, 185, 95, 0.15); }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .active-nav-link { border-bottom: 2px solid #c0c1ff; color: #c0c1ff; font-weight: 700; }
-        .modal-overlay { background: rgba(6, 14, 32, 0.85); backdrop-filter: blur(40px); }
-        
-        /* Oculta tudo até o Firebase confirmar o Login */
-        #app-content { display: none; opacity: 0; transition: opacity 0.5s ease; }
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        body { min-height: 100dvh; background: #0b1326; background-image: radial-gradient(at 0% 0%, rgba(128, 131, 255, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(78, 222, 163, 0.1) 0px, transparent 50%);}
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="bg-background text-on-background font-body-lg overflow-x-hidden min-h-screen relative">
 
-    <!-- Ecrã de Carregamento Segurança -->
-    <div id="loading-screen" class="fixed inset-0 z-[200] bg-surface-container-lowest flex flex-col items-center justify-center">
-        <span class="material-symbols-outlined text-6xl text-primary animate-spin mb-4">refresh</span>
-        <h2 class="font-display-md text-xl text-primary">A verificar credenciais...</h2>
-    </div>
-
-    <!-- MAIN APP CONTENT (Só aparece se estiver logado ou em preview) -->
-    <div id="app-content" class="flex-col min-h-screen">
-        
-        <!-- TopNavBar -->
-        <nav class="fixed top-0 w-full z-50 bg-surface-container/70 backdrop-blur-xl border-b border-white/10 shadow-sm flex justify-between items-center px-margin-desktop py-4 h-[72px]">
-            <div class="flex items-center gap-8">
-                <h1 class="font-headline-lg text-headline-lg font-bold text-primary">Yvy Poty</h1>
-                <div class="hidden md:flex gap-6 font-body-lg text-body-lg">
-                    <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-all duration-200 active:scale-95" href="#">Dashboard</a>
-                    <a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 px-2 py-1 rounded-lg" href="#" onclick="window.openRelatorio()">Relatórios</a>
-                </div>
+    <div class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6" id="auth-screen">
+        <div class="relative z-10 w-full max-w-sm glass-card rounded-3xl p-8 flex flex-col items-center gap-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+            <div class="w-20 h-20 bg-primary-container rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 mb-2">
+                <span class="material-symbols-outlined text-4xl text-on-primary-container">domain</span>
             </div>
-            <div class="flex items-center gap-4">
-                <button class="material-symbols-outlined text-on-surface-variant hover:bg-white/5 p-2 rounded-full transition-colors" onclick="window.handleLogout()" title="Sair">logout</button>
+            <div class="text-center">
+                <h1 class="font-headline-lg text-4xl text-primary mb-1 tracking-tight">Yvy Poty</h1>
+                <p class="text-on-surface-variant font-bold tracking-wider uppercase text-xs">Portal de Acesso Único</p>
             </div>
-        </nav>
-
-        <!-- Main Layout Container -->
-        <div class="flex pt-[72px] flex-1 overflow-hidden h-screen">
-            
-            <!-- Sidebar - Filtro de Turmas -->
-            <aside class="w-72 bg-surface-container-low border-r border-outline-variant p-6 hidden md:flex flex-col gap-6 overflow-y-auto custom-scrollbar pb-20">
-                <div class="flex flex-col gap-2">
-                    <span class="font-label-lg text-label-lg text-tertiary uppercase tracking-widest">Controle Acadêmico</span>
-                    <h2 class="font-headline-sm text-headline-sm text-on-surface">Filtro de Turmas</h2>
+            <div class="w-full space-y-4 mt-4">
+                <div class="space-y-2">
+                    <label class="font-label-sm text-on-surface-variant px-1">E-mail Operacional</label>
+                    <input class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" id="login-email" placeholder="nome@yvypoty.com" type="email"/>
                 </div>
-                
-                <div class="flex flex-col gap-3" id="filters-container">
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-surface-bright/30 border border-white/5 glow-amber transition-all active:scale-95" data-turma="todos">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-tertiary">groups</span>
-                            <span class="font-body-md text-tertiary">Todas as Turmas</span>
-                        </div>
-                    </button>
-                    <!-- Filtros Adaptados -->
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="1º A">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
-                            <span class="font-body-md text-on-surface-variant">Turma 1º Ano A</span>
-                        </div>
-                    </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="1º B">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
-                            <span class="font-body-md text-on-surface-variant">Turma 1º Ano B</span>
-                        </div>
-                    </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="2º A">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
-                            <span class="font-body-md text-on-surface-variant">Turma 2º Ano A</span>
-                        </div>
-                    </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="3º A">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
-                            <span class="font-body-md text-on-surface-variant">Turma 3º Ano A</span>
-                        </div>
-                    </button>
+                <div class="space-y-2">
+                    <label class="font-label-sm text-on-surface-variant px-1">Senha</label>
+                    <input class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" id="login-password" placeholder="••••••••" type="password" onkeypress="if(event.key === 'Enter') handleLogin()"/>
                 </div>
-                
-                <div class="mt-auto pt-6">
-                    <div class="glass-panel p-4 rounded-2xl flex flex-col gap-3">
-                        <p class="text-label-sm text-on-surface-variant">Status do Sistema</p>
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
-                            <span class="text-body-md text-secondary">Nuvem Firebase Conectada</span>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main Content Section -->
-            <main class="flex-1 p-margin-desktop overflow-y-auto custom-scrollbar pb-32">
-                <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div>
-                        <h2 class="font-display-md text-display-md text-on-surface mb-2">Histórico de Movimentação</h2>
-                        <p class="font-body-lg text-on-surface-variant max-w-2xl">Acompanhe em tempo real as entradas e saídas registradas na escola.</p>
-                    </div>
-                </header>
-
-                <!-- Data Table Section -->
-                <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl">
-                    <div class="p-6 border-b border-white/5 bg-white/5 flex justify-between items-center">
-                        <div class="flex items-center gap-4">
-                            <span class="material-symbols-outlined text-primary">analytics</span>
-                            <h3 class="font-headline-sm text-headline-sm" id="titulo-tabela">Log de Acessos (Geral)</h3>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="bg-surface-container-high/50 border-b border-white/10">
-                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Aluno</th>
-                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Turma</th>
-                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Evento</th>
-                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Horário</th>
-                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Nuvem</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabela-historico">
-                                <!-- Preenchido pelo Firebase -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </main>
-        </div>
-
-        <!-- Floating Widget: Alunos Presentes -->
-        <div class="fixed bottom-10 right-10 z-40 bg-gradient-to-br from-primary-container to-primary p-6 rounded-3xl glow-indigo text-on-primary-container min-w-[240px] shadow-[0_20px_50px_rgba(99,102,241,0.3)] transition-all hover:scale-105 cursor-pointer" onclick="window.openRelatorio()">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-2 bg-white/20 rounded-xl backdrop-blur-md">
-                    <span class="material-symbols-outlined">emoji_people</span>
-                </div>
-                <span class="bg-on-primary-container/20 px-2 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Ao Vivo</span>
-            </div>
-            <p class="font-label-lg opacity-80">Alunos no Campus</p>
-            <div class="flex items-end gap-2 mt-1">
-                <h4 class="font-display-md text-[48px] leading-tight font-extrabold tracking-tighter" id="counter-presentes">0</h4>
-            </div>
-        </div>
-
-        <!-- Modal: Relatório -->
-        <div class="fixed inset-0 z-[100] modal-overlay hidden items-center justify-center p-6" id="modal-relatorio">
-            <div class="glass-panel w-full max-w-4xl rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row max-h-[921px]">
-                <div class="hidden md:block w-1/3 relative bg-primary-container overflow-hidden">
-                    <div class="relative z-10 p-10 h-full flex flex-col justify-end">
-                        <h3 class="font-display-md text-display-md text-on-primary-container mb-4">Analytics Semanal</h3>
-                        <p class="font-body-md text-on-primary-container/80">Visualização detalhada da taxa de retenção e presença escolar nos últimos períodos.</p>
-                    </div>
-                </div>
-                <div class="flex-1 p-10 flex flex-col">
-                    <div class="flex justify-between items-center mb-10">
-                        <div>
-                            <h4 class="font-headline-lg text-headline-lg text-on-surface">Relatório de Frequência</h4>
-                            <p class="text-body-md text-on-surface-variant">Dados consolidados da Unidade Central</p>
-                        </div>
-                        <button class="p-2 rounded-full hover:bg-white/10 text-on-surface-variant transition-all" onclick="window.closeRelatorio()">
-                            <span class="material-symbols-outlined">close</span>
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
-                            <p class="text-label-sm text-on-surface-variant mb-1">Média Diária</p>
-                            <h5 class="font-headline-sm text-primary">94.2%</h5>
-                        </div>
-                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
-                            <p class="text-label-sm text-on-surface-variant mb-1">Total Semanal</p>
-                            <h5 class="font-headline-sm text-on-surface">842 <span class="text-xs opacity-50">reg.</span></h5>
-                        </div>
-                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
-                            <p class="text-label-sm text-on-surface-variant mb-1">Taxa Mensal</p>
-                            <h5 class="font-headline-sm text-tertiary">91.8%</h5>
-                        </div>
-                    </div>
-                </div>
+                <button class="w-full bg-primary text-on-primary font-bold py-4 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all mt-4 flex items-center justify-center gap-2" id="btn-entrar" onclick="handleLogin()">
+                    Entrar no Sistema
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- FIREBASE (Módulo V11) E LÓGICA -->
+    <div class="fixed top-10 left-1/2 -translate-x-1/2 z-[200] w-[calc(100%-40px)] max-w-sm pointer-events-none transition-transform duration-500 -translate-y-[150%]" id="toast-container">
+        <div class="glass-card px-6 py-4 rounded-2xl border-l-4 border-error flex items-center gap-4 shadow-2xl bg-surface-container-highest">
+            <div class="w-10 h-10 rounded-full bg-error/20 flex items-center justify-center text-error">
+                <span class="material-symbols-outlined">error</span>
+            </div>
+            <div>
+                <h5 class="font-bold text-on-surface">Acesso Negado</h5>
+                <p class="text-sm text-on-surface-variant" id="toast-msg">E-mail ou senha incorretos.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase v11 e Lógica Híbrida -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // =======================================================
-        // 1. CHAVES DO FIREBASE E SUPORTE A PREVIEW
-        // =======================================================
         let firebaseConfig = {
   apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
   authDomain: "monitora-yvypoty.firebaseapp.com",
@@ -246,224 +93,78 @@
   appId: "1:778447943661:web:a128b7f140bcd9629919e4"
         };
 
-        // Deteta se está no ambiente de pré-visualização (Canvas) ou no GitHub Pages
         const isPreview = typeof __firebase_config !== 'undefined';
         if (isPreview) {
-            try {
-                firebaseConfig = JSON.parse(__firebase_config);
-            } catch (e) {
-                console.error("Erro ao carregar configurações de preview", e);
-            }
+            try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) {}
         }
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        // =======================================================
-        // 2. BANCO LOCAL (Nomes dos alunos)
-        // =======================================================
-        const databaseAlunos = {
-            "2026001": { nome: "Ana Silva", turma: "1º A" },
-            "2026002": { nome: "Bruno Costa", turma: "1º B" },
-            "003": { nome: "Carlos Sousa", turma: "2º A" },
-            "004": { nome: "Diana Lima", turma: "2º B" },
-            "005": { nome: "Eduardo Gomes", turma: "3º A" }
-        };
-
-        let historicoGeral = [];
-        let filtroAtual = 'todos';
-
-        // =======================================================
-        // 3. PROTEÇÃO DE ROTAS (AUTH GUARD) HÍBRIDA
-        // =======================================================
-        
-        // No ambiente de preview, forçamos o login anônimo para o design carregar sem erros.
-        // No GitHub Pages, isto não é executado e a segurança do e-mail é preservada.
-        const initAuth = async () => {
-            if (isPreview) {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                    console.error("Erro auth preview:", error);
+        if (isPreview) {
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
                 }
+            };
+            initAuth();
+        }
+
+        function redirecionarPorPerfil(email) {
+            if (isPreview) return; // Se estiver em teste, não tenta redirecionar e evita o erro
+
+            const emailMin = email.toLowerCase();
+            if (emailMin.includes('zelador')) {
+                window.location.href = 'zelador.html';
+            } else if (emailMin.includes('cozinha')) {
+                window.location.href = 'cozinha.html';
+            } else {
+                window.location.href = 'admin.html';
             }
-        };
-        initAuth();
+        }
 
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Remove a tela de carregamento e mostra a App
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('app-content').style.display = 'flex';
-                
-                setTimeout(() => {
-                    document.getElementById('app-content').style.opacity = '1';
-                }, 100);
-
-                iniciarLeituraFirebase(user);
-            } else {
-                if (!isPreview) {
-                    // Evita o erro de URL em preview, mas expulsa intrusos no GitHub Pages
-                    window.location.href = 'index.html';
-                }
+            if (user && user.email) {
+                redirecionarPorPerfil(user.email);
             }
         });
 
-        window.handleLogout = function() {
-            signOut(auth).then(() => {
-                if (!isPreview) {
-                    window.location.href = 'index.html';
-                }
-            });
-        }
+        window.handleLogin = function() {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            const btn = document.getElementById('btn-entrar');
 
-        // =======================================================
-        // 4. LÓGICA DE DADOS (FIREBASE) E INTERFACE
-        // =======================================================
-        function iniciarLeituraFirebase(user) {
-            // Usa o caminho isolado no Preview, e o seu caminho original no GitHub Pages
-            let refRegistos;
-            if (isPreview) {
-                refRegistos = collection(db, 'artifacts', appId, 'users', user.uid, 'registos_acesso');
-            } else {
-                refRegistos = collection(db, "registos_acesso");
-            }
-            
-            onSnapshot(refRegistos, (snapshot) => {
-                historicoGeral = [];
-                let presentesStatus = {};
-
-                snapshot.forEach(doc => {
-                    let data = doc.data();
-                    historicoGeral.push(data);
-                    
-                    if(data.tipo === 'entrada') presentesStatus[data.idAluno] = true;
-                    if(data.tipo === 'saida') presentesStatus[data.idAluno] = false;
-                });
-
-                // Ordena por horário (do mais recente para o mais antigo)
-                historicoGeral.sort((a, b) => b.hora.localeCompare(a.hora));
-
-                // Atualiza o Widget Gigante no canto
-                let totalPresentes = Object.values(presentesStatus).filter(status => status === true).length;
-                document.getElementById('counter-presentes').innerText = totalPresentes;
-
-                renderizarTabela();
-            });
-        }
-
-        function renderizarTabela() {
-            const tbody = document.getElementById('tabela-historico');
-            tbody.innerHTML = '';
-
-            let logs = filtroAtual !== 'todos'
-                ? historicoGeral.filter(l => {
-                    let aluno = databaseAlunos[l.idAluno];
-                    return aluno && aluno.turma === filtroAtual;
-                })
-                : historicoGeral;
-
-            if(logs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-on-surface-variant font-body-lg">Nenhum registro encontrado.</td></tr>`;
+            if (!email || !pass) {
+                mostrarErro("Preencha o e-mail e a senha.");
                 return;
             }
 
-            // Mapeia e injeta as linhas mantendo o design Premium HTML do CSS
-            tbody.innerHTML = logs.map(log => {
-                let aluno = databaseAlunos[log.idAluno] || { nome: `ID Desconhecido (${log.idAluno})`, turma: "N/D" };
-                
-                let isEntrada = log.tipo === 'entrada';
-                let corIcone = isEntrada ? 'text-secondary' : 'text-danger';
-                let iconTipo = isEntrada ? 'login' : 'logout';
-                let textoStatus = isEntrada ? 'Entrada' : 'Saída';
-                
-                return `
-                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                    <td class="px-6 py-5">
-                        <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 rounded-full bg-surface-bright flex items-center justify-center border border-white/10">
-                                <span class="material-symbols-outlined text-primary">person</span>
-                            </div>
-                            <div>
-                                <p class="font-body-lg text-on-surface">${aluno.nome}</p>
-                                <p class="text-label-sm text-on-surface-variant">ID: #${log.idAluno}</p>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5 font-body-md text-on-surface-variant">${aluno.turma}</td>
-                    <td class="px-6 py-5">
-                        <div class="flex items-center gap-2 ${corIcone}">
-                            <span class="material-symbols-outlined text-[20px]">${iconTipo}</span>
-                            <span class="font-body-md">${textoStatus}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-5 font-body-md text-on-surface">${log.hora}</td>
-                    <td class="px-6 py-5">
-                        <span class="px-3 py-1 rounded-full text-label-sm bg-secondary/15 text-secondary">
-                            Sincronizado
-                        </span>
-                    </td>
-                </tr>
-                `;
-            }).join('');
-        }
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin">refresh</span> Autenticando...`;
+            btn.classList.add('opacity-80', 'pointer-events-none');
 
-        // =======================================================
-        // 5. INTERATIVIDADE DA TELA
-        // =======================================================
-        window.openRelatorio = function() {
-            const modal = document.getElementById('modal-relatorio');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.body.style.overflow = 'hidden';
-        }
-
-        window.closeRelatorio = function() {
-            const modal = document.getElementById('modal-relatorio');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Sistema de abas do menu lateral
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const botaoClicado = e.currentTarget;
-                filtroAtual = botaoClicado.getAttribute('data-turma');
-                
-                // Reseta todos
-                document.querySelectorAll('.filter-btn').forEach(b => {
-                    b.classList.remove('bg-surface-bright/30', 'glow-amber');
-                    b.classList.add('bg-transparent');
-                    b.querySelector('span:first-child').classList.remove('text-tertiary');
-                    b.querySelector('span:first-child').classList.add('text-on-surface-variant');
-                    b.querySelector('span:last-child').classList.remove('text-tertiary');
-                    b.querySelector('span:last-child').classList.add('text-on-surface-variant');
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => {
+                    if (isPreview) btn.innerHTML = `Entrou (Modo Preview)`;
+                })
+                .catch(() => {
+                    btn.innerHTML = `Entrar no Sistema`;
+                    btn.classList.remove('opacity-80', 'pointer-events-none');
+                    mostrarErro("E-mail ou senha incorretos.");
                 });
+        }
 
-                // Ativa o clicado
-                botaoClicado.classList.add('bg-surface-bright/30', 'glow-amber');
-                botaoClicado.classList.remove('bg-transparent');
-                botaoClicado.querySelector('span:first-child').classList.add('text-tertiary');
-                botaoClicado.querySelector('span:first-child').classList.remove('text-on-surface-variant');
-                botaoClicado.querySelector('span:last-child').classList.add('text-tertiary');
-                botaoClicado.querySelector('span:last-child').classList.remove('text-on-surface-variant');
-
-                // Atualiza Título e Tabela
-                if(filtroAtual === 'todos') {
-                    document.getElementById('titulo-tabela').innerText = 'Log de Acessos (Geral)';
-                } else {
-                    document.getElementById('titulo-tabela').innerText = `Log de Acessos - Turma: ${filtroAtual}`;
-                }
-                renderizarTabela();
-            });
-        });
+        function mostrarErro(mensagem) {
+            const toast = document.getElementById('toast-container');
+            document.getElementById('toast-msg').innerText = mensagem;
+            toast.classList.remove('-translate-y-[150%]');
+            toast.classList.add('translate-y-0');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0');
+                toast.classList.add('-translate-y-[150%]');
+            }, 4000);
+        }
     </script>
 </body>
 </html>
