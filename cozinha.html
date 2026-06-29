@@ -10,161 +10,167 @@
     <script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" type="module"></script>
     <script nomodule="" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- Repare: NÃO há mais os links da versão 8 aqui em cima! -->
     
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary-container": "#4f46e5", "secondary": "#4edea3", 
-                        "error": "#ffb4ab", "surface-container-high": "#222a3d",
-                        "on-surface-variant": "#c7c4d8", "primary": "#c3c0ff"
-                    },
-                    fontFamily: {
-                        sans: ["Inter", "sans-serif"],
-                        display: ["Syne", "sans-serif"]
-                    }
-                }
-            }
+            theme: { extend: { colors: { "primary-container": "#4f46e5", "secondary": "#4edea3", "error": "#ffb4ab", "surface-container-high": "#222a3d", "on-surface-variant": "#c7c4d7", "primary": "#c3c0ff" }, fontFamily: { sans: ["Inter", "sans-serif"], display: ["Syne", "sans-serif"] } } }
         }
     </script>
     <style>
-        :root {
-            --glass-bg: rgba(15, 23, 42, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
-
-        body { 
-            background: #0f172a;
-            color: white; 
-            min-height: 100dvh; /* 100dvh garante altura correta no mobile (safari/chrome) */
-            overflow: hidden;
-            touch-action: none; /* Previne scroll no ecrã inteiro */
-        }
-
+        :root { --glass-bg: rgba(15, 23, 42, 0.6); --glass-border: rgba(255, 255, 255, 0.1); }
+        body { background: #0f172a; color: white; min-height: 100dvh; overflow: hidden; touch-action: none; }
         .syne { font-family: 'Syne', sans-serif; }
-
-        .glass {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .animate-fade-in-up {
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        .glass { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-pulse-glow { animation: pulseGlow 4s ease-in-out infinite; }
-        @keyframes pulseGlow {
-            0%, 100% { text-shadow: 0 0 40px rgba(79, 70, 229, 0.4); }
-            50% { text-shadow: 0 0 70px rgba(79, 70, 229, 0.8), 0 0 20px rgba(255, 255, 255, 0.2); }
-        }
-
-        .status-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: #10b981; box-shadow: 0 0 10px #10b981;
-            display: inline-block; animation: blink 2s infinite;
-        }
+        @keyframes pulseGlow { 0%, 100% { text-shadow: 0 0 40px rgba(79, 70, 229, 0.4); } 50% { text-shadow: 0 0 70px rgba(79, 70, 229, 0.8), 0 0 20px rgba(255, 255, 255, 0.2); } }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; display: inline-block; animation: blink 2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
         .stat-card { transition: transform 0.3s ease, border-color 0.3s ease; }
         .stat-card:active { transform: scale(0.95); }
     </style>
 </head>
 <body class="flex flex-col items-center justify-between p-4 sm:p-6 w-full relative">
     
-    <!-- Fundo Animado (WebGL Shader) -->
+    <div id="loading-screen" class="fixed inset-0 z-[200] bg-slate-900 flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-6xl text-indigo-400 animate-spin mb-4" style="font-family: 'Material Symbols Outlined'">refresh</span>
+        <h2 class="font-bold text-xl text-indigo-400">A verificar credenciais...</h2>
+    </div>
+
     <canvas id="shader-canvas" class="fixed inset-0 w-full h-full -z-10 block pointer-events-none"></canvas>
 
-    <!-- Header Branding (Ajustado para Mobile) -->
-    <header class="w-full flex justify-between items-start animate-fade-in-up z-10 pt-4" style="animation-delay: 0.1s;">
-        <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-2 glass px-4 py-1.5 rounded-full border-indigo-500/30">
-                <ion-icon class="text-indigo-400 text-lg" name="restaurant"></ion-icon>
-                <h1 class="syne font-extrabold text-sm tracking-widest text-white">YVY POTY <span class="text-indigo-400">COZINHA</span></h1>
-            </div>
-        </div>
-        
-        <div class="flex items-center gap-2 px-3 py-1 bg-surface-container-high/80 backdrop-blur-md rounded-full border border-outline-variant/20">
-            <span class="status-dot !m-0"></span>
-            <span class="text-[10px] font-semibold text-secondary tracking-wider uppercase hidden sm:inline">Live</span>
-        </div>
-    </header>
-
-    <!-- Main Display -->
-    <main class="flex flex-col items-center w-full max-w-4xl z-10 my-auto">
-        
-        <!-- Total Presentes -->
-        <div class="text-center mb-8 sm:mb-12 animate-fade-in-up" style="animation-delay: 0.3s;">
-            <h2 class="text-slate-300 uppercase tracking-[0.2em] sm:tracking-[0.4em] font-semibold text-[10px] sm:text-sm mb-2 sm:mb-4">Total de Alunos no Campus</h2>
-            <div class="syne font-extrabold text-[8rem] sm:text-[12rem] md:text-[16rem] leading-none animate-pulse-glow" id="total-presentes">0</div>
-        </div>
-
-        <!-- Alerta de Cozinha Encerrada (16:39) -->
-        <div id="cozinha-alerta" class="hidden w-full max-w-sm mb-6 bg-red-500/20 border border-red-500/30 rounded-2xl p-4 text-center glass animate-fade-in-up">
-            <h3 class="text-red-400 font-bold text-lg flex items-center justify-center gap-2">
-                <ion-icon name="lock-closed-outline"></ion-icon> Expediente Encerrado
-            </h3>
-        </div>
-
-        <!-- Stats Grid (Ajustado para Mobile) -->
-        <div class="grid grid-cols-2 gap-3 sm:gap-6 w-full animate-fade-in-up" style="animation-delay: 0.5s;" id="stats-grid">
-            <!-- Entrada -->
-            <div class="glass stat-card rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-center gap-2">
-                <div class="bg-emerald-500/10 p-2 sm:p-3 rounded-xl sm:rounded-2xl mb-1">
-                    <ion-icon class="text-emerald-400 text-2xl sm:text-3xl" name="log-in-outline"></ion-icon>
+    <div id="app-content" class="flex-col w-full h-full hidden opacity-0 transition-opacity duration-500">
+        <header class="w-full flex justify-between items-start animate-fade-in-up z-10 pt-4" style="animation-delay: 0.1s;">
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 glass px-4 py-1.5 rounded-full border-indigo-500/30">
+                    <ion-icon class="text-indigo-400 text-lg" name="restaurant"></ion-icon>
+                    <h1 class="syne font-extrabold text-sm tracking-widest text-white">YVY POTY <span class="text-indigo-400">COZINHA</span></h1>
                 </div>
-                <div class="syne text-4xl sm:text-5xl font-bold text-emerald-400" id="total-entradas">0</div>
-                <div class="text-slate-400 text-[9px] sm:text-xs uppercase tracking-widest font-bold text-center">Entraram</div>
             </div>
-            <!-- Saída -->
-            <div class="glass stat-card rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-center gap-2">
-                <div class="bg-orange-500/10 p-2 sm:p-3 rounded-xl sm:rounded-2xl mb-1">
-                    <ion-icon class="text-orange-400 text-2xl sm:text-3xl" name="log-out-outline"></ion-icon>
+            <div class="flex items-center gap-2 px-3 py-1 bg-surface-container-high/80 backdrop-blur-md rounded-full border border-outline-variant/20">
+                <button class="flex items-center justify-center w-8 h-8 rounded-full hover:bg-white/10 transition-colors" onclick="window.fazerLogout()" title="Sair">
+                    <ion-icon name="log-out-outline" class="text-white"></ion-icon>
+                </button>
+                <span class="status-dot !m-0"></span>
+            </div>
+        </header>
+
+        <main class="flex flex-col items-center w-full max-w-4xl z-10 my-auto h-full justify-center">
+            <div class="text-center mb-8 sm:mb-12 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <h2 class="text-slate-300 uppercase tracking-[0.2em] sm:tracking-[0.4em] font-semibold text-[10px] sm:text-sm mb-2 sm:mb-4">Total de Alunos no Campus</h2>
+                <div class="syne font-extrabold text-[8rem] sm:text-[12rem] md:text-[16rem] leading-none animate-pulse-glow" id="total-presentes">0</div>
+            </div>
+
+            <div id="cozinha-alerta" class="hidden w-full max-w-sm mb-6 bg-red-500/20 border border-red-500/30 rounded-2xl p-4 text-center glass animate-fade-in-up">
+                <h3 class="text-red-400 font-bold text-lg flex items-center justify-center gap-2"><ion-icon name="lock-closed-outline"></ion-icon> Expediente Encerrado</h3>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 sm:gap-6 w-full animate-fade-in-up" style="animation-delay: 0.5s;" id="stats-grid">
+                <div class="glass stat-card rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-center gap-2">
+                    <div class="bg-emerald-500/10 p-2 sm:p-3 rounded-xl sm:rounded-2xl mb-1"><ion-icon class="text-emerald-400 text-2xl sm:text-3xl" name="log-in-outline"></ion-icon></div>
+                    <div class="syne text-4xl sm:text-5xl font-bold text-emerald-400" id="total-entradas">0</div>
+                    <div class="text-slate-400 text-[9px] sm:text-xs uppercase tracking-widest font-bold text-center">Entraram</div>
                 </div>
-                <div class="syne text-4xl sm:text-5xl font-bold text-orange-400" id="total-saidas">0</div>
-                <div class="text-slate-400 text-[9px] sm:text-xs uppercase tracking-widest font-bold text-center">Saíram</div>
+                <div class="glass stat-card rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-center gap-2">
+                    <div class="bg-orange-500/10 p-2 sm:p-3 rounded-xl sm:rounded-2xl mb-1"><ion-icon class="text-orange-400 text-2xl sm:text-3xl" name="log-out-outline"></ion-icon></div>
+                    <div class="syne text-4xl sm:text-5xl font-bold text-orange-400" id="total-saidas">0</div>
+                    <div class="text-slate-400 text-[9px] sm:text-xs uppercase tracking-widest font-bold text-center">Saíram</div>
+                </div>
             </div>
-        </div>
-    </main>
+        </main>
 
-    <!-- Footer info (Ajustado para Mobile) -->
-    <footer class="w-full flex justify-between items-end animate-fade-in-up z-10 pb-4" style="animation-delay: 0.7s;">
-        <div class="text-slate-500 text-[8px] sm:text-[11px] uppercase tracking-wider flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-            <span class="flex items-center gap-1"><ion-icon name="time-outline"></ion-icon> <span class="text-slate-300 font-mono" id="current-time">00:00:00</span></span>
-            <span class="hidden sm:block w-1 h-1 bg-slate-700 rounded-full"></span>
-            <span>Atualização Live</span>
-        </div>
-        <div class="text-slate-600 text-[8px] uppercase font-bold tracking-widest">
-            Yvy Poty OS
-        </div>
-    </footer>
+        <footer class="w-full flex justify-between items-end animate-fade-in-up z-10 pb-4 mt-auto" style="animation-delay: 0.7s;">
+            <div class="text-slate-500 text-[8px] sm:text-[11px] uppercase tracking-wider flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                <span class="flex items-center gap-1"><ion-icon name="time-outline"></ion-icon> <span class="text-slate-300 font-mono" id="current-time">00:00:00</span></span>
+            </div>
+            <div class="text-slate-600 text-[8px] uppercase font-bold tracking-widest">Yvy Poty OS</div>
+        </footer>
+    </div>
 
+    <!-- Fundo Animado Independente -->
     <script>
-        // =======================================================
-        // 1. RELÓGIO E REGRA DE FECHAMENTO (16:39)
-        // =======================================================
-        let isEncerrado = false;
+        (function() {
+            const canvas = document.getElementById('shader-canvas');
+            function syncSize() {
+                const w = canvas.clientWidth || window.innerWidth;
+                const h = canvas.clientHeight || window.innerHeight;
+                if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+            }
+            window.addEventListener('resize', syncSize); syncSize();
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (!gl) return;
+            const vs = `attribute vec2 a_position; varying vec2 v_texCoord; void main() { v_texCoord = a_position * 0.5 + 0.5; gl_Position = vec4(a_position, 0.0, 1.0); }`;
+            const fs = `precision highp float; varying vec2 v_texCoord; uniform float u_time; void main() { vec2 uv = v_texCoord; float noise = sin(uv.x * 10.0 + u_time * 0.5) * 0.1; noise += sin(uv.y * 8.0 - u_time * 0.3) * 0.1; vec3 color1 = vec3(0.059, 0.09, 0.165); vec3 color2 = vec3(0.118, 0.161, 0.231); vec3 accent = vec3(0.31, 0.275, 0.898); vec3 color = mix(color1, color2, uv.y + noise); color = mix(color, accent, (sin(u_time * 0.2) * 0.5 + 0.5) * 0.05); float vignette = 1.0 - length(uv - 0.5) * 0.5; gl_FragColor = vec4(color * vignette, 1.0); }`;
+            function cs(type, src) { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+            const prog = gl.createProgram(); gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog); gl.useProgram(prog);
+            const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+            const pos = gl.getAttribLocation(prog, 'a_position'); gl.enableVertexAttribArray(pos); gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+            const uTime = gl.getUniformLocation(prog, 'u_time');
+            function render(t) { gl.viewport(0, 0, canvas.width, canvas.height); if (uTime) gl.uniform1f(uTime, t * 0.001); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); requestAnimationFrame(render); }
+            render(0);
+        })();
+    </script>
 
+    <!-- FIREBASE v11 E LÓGICA DE SEGURANÇA -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let firebaseConfig = {
+            apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
+            authDomain: "monitora-yvypoty.firebaseapp.com",
+            projectId: "monitora-yvypoty",
+            storageBucket: "monitora-yvypoty.firebasestorage.app",
+            messagingSenderId: "778447943661",
+            appId: "1:778447943661:web:a128b7f140bcd9629919e4"
+        };
+
+        const isPreview = typeof __firebase_config !== 'undefined';
+        if (isPreview) { try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) {} }
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        if (isPreview) {
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            };
+            initAuth();
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loading-screen').style.display = 'none';
+                const appContent = document.getElementById('app-content');
+                appContent.style.display = 'flex';
+                setTimeout(() => appContent.style.opacity = '1', 100);
+                iniciarLeituraFirebase(user);
+            } else {
+                if (!isPreview) {
+                    window.location.href = 'index.html';
+                }
+            }
+        });
+
+        window.fazerLogout = function() {
+            signOut(auth).then(() => { if (!isPreview) window.location.href = 'index.html'; });
+        }
+
+        let isEncerrado = false;
         function updateClock() {
             const now = new Date();
             document.getElementById('current-time').innerText = now.toLocaleTimeString('pt-BR');
-            
-            // Regra: Passou das 16:39, zera o placar principal
-            const h = now.getHours();
-            const m = now.getMinutes();
+            const h = now.getHours(), m = now.getMinutes();
             isEncerrado = (h > 16 || (h === 16 && m >= 39));
 
             if (isEncerrado) {
@@ -176,112 +182,38 @@
                 document.getElementById('stats-grid').style.opacity = "1";
             }
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+        setInterval(updateClock, 1000); updateClock();
 
-        // =======================================================
-        // 2. LÓGICA DO WEBGL SHADER (FUNDO ANIMADO)
-        // =======================================================
-        (function() {
-            const canvas = document.getElementById('shader-canvas');
-            function syncSize() {
-                const w = canvas.clientWidth || window.innerWidth;
-                const h = canvas.clientHeight || window.innerHeight;
-                if (canvas.width !== w || canvas.height !== h) {
-                    canvas.width = w; canvas.height = h;
-                }
-            }
-            window.addEventListener('resize', syncSize);
-            syncSize();
-
-            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-            if (!gl) return;
-            const vs = `attribute vec2 a_position; varying vec2 v_texCoord; void main() { v_texCoord = a_position * 0.5 + 0.5; gl_Position = vec4(a_position, 0.0, 1.0); }`;
-            const fs = `precision highp float; varying vec2 v_texCoord; uniform float u_time;
-            void main() {
-                vec2 uv = v_texCoord;
-                float noise = sin(uv.x * 10.0 + u_time * 0.5) * 0.1;
-                noise += sin(uv.y * 8.0 - u_time * 0.3) * 0.1;
-                vec3 color1 = vec3(0.059, 0.09, 0.165); 
-                vec3 color2 = vec3(0.118, 0.161, 0.231); 
-                vec3 accent = vec3(0.31, 0.275, 0.898); 
-                vec3 color = mix(color1, color2, uv.y + noise);
-                color = mix(color, accent, (sin(u_time * 0.2) * 0.5 + 0.5) * 0.05);
-                float vignette = 1.0 - length(uv - 0.5) * 0.5;
-                gl_FragColor = vec4(color * vignette, 1.0);
-            }`;
-            function cs(type, src) {
-                const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s;
-            }
-            const prog = gl.createProgram();
-            gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
-            gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
-            gl.linkProgram(prog); gl.useProgram(prog);
-            const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
-            const pos = gl.getAttribLocation(prog, 'a_position');
-            gl.enableVertexAttribArray(pos); gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
-            const uTime = gl.getUniformLocation(prog, 'u_time');
-
-            function render(t) {
-                gl.viewport(0, 0, canvas.width, canvas.height);
-                if (uTime) gl.uniform1f(uTime, t * 0.001);
-                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-                requestAnimationFrame(render);
-            }
-            render(0);
-        })();
-
-        // =======================================================
-        // 3. FIREBASE CONFIGURATION
-        // =======================================================
-        const firebaseConfig = {
-  apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
-  authDomain: "monitora-yvypoty.firebaseapp.com",
-  projectId: "monitora-yvypoty",
-  storageBucket: "monitora-yvypoty.firebasestorage.app",
-  messagingSenderId: "778447943661",
-  appId: "1:778447943661:web:a128b7f140bcd9629919e4"
-        };
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const db = firebase.firestore();
-
-        // =======================================================
-        // 4. REAL-TIME LOGIC
-        // =======================================================
-        db.collection("registos_acesso").onSnapshot((snapshot) => {
-            let presentesStatus = {}; 
-            let contagemEntradas = 0;
-            let contagemSaidas = 0;
-
-            let logs = [];
-            snapshot.forEach(doc => logs.push(doc.data()));
+        function iniciarLeituraFirebase(user) {
+            if (!user) return;
             
-            logs.forEach(log => {
-                if(log.tipo === 'entrada') {
-                    presentesStatus[log.idAluno] = true;
-                    contagemEntradas++;
-                } else if (log.tipo === 'saida') {
-                    presentesStatus[log.idAluno] = false;
-                    contagemSaidas++;
-                }
+            // O caminho seguro com prevenção de permissões
+            let refRegistos = isPreview ? collection(db, 'artifacts', appId, 'public', 'data', 'registos_acesso') : collection(db, "registos_acesso");
+            
+            onSnapshot(refRegistos, (snapshot) => {
+                let presentesStatus = {}, contagemEntradas = 0, contagemSaidas = 0;
+
+                snapshot.forEach(doc => {
+                    let log = doc.data();
+                    if(log.tipo === 'entrada') { presentesStatus[log.idAluno] = true; contagemEntradas++; }
+                    else if (log.tipo === 'saida') { presentesStatus[log.idAluno] = false; contagemSaidas++; }
+                });
+
+                let alunosPresentes = Object.values(presentesStatus).filter(status => status === true).length;
+
+                if(!isEncerrado) animarNumero('total-presentes', alunosPresentes);
+                animarNumero('total-entradas', contagemEntradas);
+                animarNumero('total-saidas', contagemSaidas);
+            }, (error) => {
+                console.error("Erro no Firebase:", error);
             });
-
-            let alunosPresentes = Object.values(presentesStatus).filter(status => status === true).length;
-
-            if(!isEncerrado) {
-                animarNumero('total-presentes', alunosPresentes);
-            }
-            animarNumero('total-entradas', contagemEntradas);
-            animarNumero('total-saidas', contagemSaidas);
-        });
+        }
 
         function animarNumero(id, novoValor) {
             const el = document.getElementById(id);
             let valorAtual = parseInt(el.innerText) || 0; 
             if(valorAtual !== novoValor) {
                 el.innerText = novoValor;
-                // Animação de pop leve quando o número muda
                 el.style.transform = 'scale(1.1)';
                 setTimeout(() => el.style.transform = 'scale(1)', 200);
             }
