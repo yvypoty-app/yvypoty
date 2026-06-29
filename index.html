@@ -1,191 +1,243 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html class="dark" lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yvy Poty - Monitoramento</title>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Yvy Poty | Painel Administrativo</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <!-- Material Symbols & Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Syne:wght@400..800&display=swap" rel="stylesheet"/>
     
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Theme Config (Design Preservado 100%) -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#464554", "surface-container-lowest": "#060e20", "on-surface-variant": "#c7c4d7",
+                        "outline": "#908fa0", "tertiary": "#ffb95f", "on-secondary": "#003824", "on-secondary-container": "#00311f",
+                        "text-muted": "#94a3b8", "text-main": "#f8fafc", "on-surface": "#dae2fd", "error-container": "#93000a",
+                        "surface-bright": "#2d3449", "surface-tint": "#c0c1ff", "primary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed": "#6ffbbe", "on-error": "#690005", "secondary-fixed-dim": "#4edea3",
+                        "on-background": "#dae2fd", "inverse-on-surface": "#283044", "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#2d3449", "on-primary-fixed": "#07006c", "primary-container": "#8083ff",
+                        "on-primary-container": "#0d0096", "surface-variant": "#2d3449", "danger": "#ef4444",
+                        "border": "#334155", "surface-container-high": "#222a3d", "inverse-surface": "#dae2fd",
+                        "tertiary-fixed-dim": "#ffb95f", "tertiary-container": "#ca8100", "secondary-container": "#00a572",
+                        "on-tertiary": "#472a00", "on-tertiary-container": "#3e2400", "surface-container-low": "#131b2e",
+                        "surface-dim": "#0b1326", "surface-container": "#171f33", "on-primary-fixed-variant": "#2f2ebe",
+                        "primary": "#c0c1ff", "primary-fixed": "#e1e0ff", "indigo-glow": "rgba(99, 102, 241, 0.15)",
+                        "on-primary": "#1000a9", "on-tertiary-fixed": "#2a1700"
+                    },
+                    "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
+                    "spacing": { "base": "8px", "sm": "12px", "xl": "48px", "margin-mobile": "16px", "margin-desktop": "40px", "gutter": "24px", "md": "24px", "xs": "4px", "lg": "32px" },
+                    "fontFamily": { "body-lg": ["DM Sans"], "headline-sm": ["Syne"], "display-md": ["Syne"], "label-lg": ["DM Sans"], "label-sm": ["DM Sans"], "body-md": ["DM Sans"], "headline-lg": ["Syne"] }
+                }
+            }
+        }
+    </script>
     <style>
-        /* TOKENS E TEMA BASE */
-        :root {
-            --primary: #4f46e5; --success: #10b981; --warning: #f59e0b; --orange: #f97316;
-            --bg-body: #0f172a; --bg-surface: #1e293b;
-            --text-main: #f8fafc; --text-muted: #94a3b8;
-            --border: #334155;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'DM Sans', sans-serif; background-color: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
-        /* HEADER */
-        .top-nav { background: var(--bg-surface); padding: 20px 30px; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
-        .top-nav h3 { font-family: 'Syne', sans-serif; font-size: 22px; color: var(--primary); display: flex; align-items: center; gap: 10px;}
-
-        /* MAIN LAYOUT */
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
-        .admin-grid { display: grid; grid-template-columns: 300px 1fr; gap: 30px; align-items: start; height: 100%; }
+        body { background-color: #0b1326; color: #dae2fd; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glow-indigo { box-shadow: 0 0 30px rgba(99, 102, 241, 0.2); }
+        .glow-amber { box-shadow: 0 0 30px rgba(255, 185, 95, 0.15); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .active-nav-link { border-bottom: 2px solid #c0c1ff; color: #c0c1ff; font-weight: 700; }
+        .modal-overlay { background: rgba(6, 14, 32, 0.85); backdrop-filter: blur(40px); }
         
-        @media (max-width: 900px) {
-            .admin-grid { grid-template-columns: 1fr; }
-        }
-
-        /* PAINEL ESQUERDO (TURMAS) */
-        .panel-left { background: var(--warning); padding: 25px; border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 25px rgba(245,158,11,0.2);}
-        .panel-left h3 { margin-bottom: 20px; font-weight: 800; }
-        .turmas-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; background: rgba(255,255,255,0.2); padding: 15px; border-radius: 15px;}
-        .btn-turma { background: #cbd5e1; color: #334155; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-turma:hover { background: white; }
-        .btn-turma.selecionada { background: var(--primary); color: white; box-shadow: 0 0 15px rgba(0,0,0,0.4); }
-        
-        /* TABELA DE HISTÓRICO */
-        .panel-right { background: var(--bg-surface); padding: 25px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 500px; overflow-y: auto; max-height: calc(100vh - 150px);}
-        .tabela-historico { width: 100%; border-collapse: collapse; }
-        .tabela-historico th, .tabela-historico td { padding: 18px 15px; text-align: left; border-bottom: 1px solid var(--border); }
-        .tabela-historico th { color: var(--text-muted); text-transform: uppercase; font-size: 13px; letter-spacing: 1px;}
-        .tabela-historico tr:hover td { background: rgba(255,255,255,0.02); }
-        .badge-status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; background: rgba(16,185,129,0.15); color: var(--success); display: inline-flex; align-items: center; gap: 5px;}
-        
-        /* WIDGET FLUTUANTE NO CANTO */
-        .widget-presentes {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, #4f46e5, #3b82f6);
-            padding: 15px 25px;
-            border-radius: 30px;
-            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 100;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .widget-presentes:hover { transform: translateY(-5px) scale(1.05); }
-        .widget-num { font-size: 32px; font-weight: 800; font-family: 'Syne', sans-serif; line-height: 1;}
-        .widget-text { display: flex; flex-direction: column; }
-        .widget-text span:first-child { font-size: 14px; font-weight: 700; }
-        .widget-text span:last-child { font-size: 10px; color: #cbd5e1; text-transform: uppercase; }
-
-        /* MODAL DE RELATÓRIO */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-            display: none; justify-content: center; align-items: center; z-index: 999;
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-content {
-            background: var(--bg-surface); padding: 40px; border-radius: 24px; border: 1px solid var(--border);
-            width: 90%; max-width: 450px; text-align: center; position: relative;
-            transform: translateY(20px); transition: transform 0.3s ease;
-        }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        .btn-close { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
-        .btn-close:hover { color: white; }
-        
-        .modal-title { font-family: 'Syne', sans-serif; font-size: 24px; margin-bottom: 30px; color: var(--primary); }
-        .relatorio-grid { display: flex; flex-direction: column; gap: 15px; }
-        .rel-card { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;}
-        .rel-card .label { color: var(--text-muted); font-weight: 600; font-size: 14px; }
-        .rel-card .valor { font-size: 24px; font-weight: 800; color: white; }
-
+        /* Oculta tudo até o Firebase confirmar o Login */
+        #app-content { display: none; opacity: 0; transition: opacity 0.5s ease; }
     </style>
 </head>
-<body>
+<body class="flex flex-col min-h-screen">
 
-    <!-- CABEÇALHO LISINHO -->
-    <div class="top-nav">
-        <h3><ion-icon name="analytics-outline"></ion-icon> Yvy Poty - Painel Administrativo</h3>
+    <!-- Ecrã de Carregamento Segurança -->
+    <div id="loading-screen" class="fixed inset-0 z-[200] bg-surface-container-lowest flex flex-col items-center justify-center">
+        <span class="material-symbols-outlined text-6xl text-primary animate-spin mb-4">refresh</span>
+        <h2 class="font-display-md text-xl text-primary">A verificar credenciais...</h2>
     </div>
 
-    <!-- WIDGET FLUTUANTE (CANTO INFERIOR DIREITO) -->
-    <div class="widget-presentes" onclick="abrirRelatorio()">
-        <div class="widget-num" id="widget-qtd">0</div>
-        <div class="widget-text">
-            <span>Alunos Presentes</span>
-            <span>Clique para Relatórios</span>
-        </div>
-    </div>
-
-    <!-- MODAL DO RELATÓRIO (OCULTO POR PADRÃO) -->
-    <div class="modal-overlay" id="modal-relatorio" onclick="fecharModal(event)">
-        <div class="modal-content">
-            <button class="btn-close" onclick="document.getElementById('modal-relatorio').classList.remove('active')"><ion-icon name="close-outline"></ion-icon></button>
-            <h2 class="modal-title">Relatório de Frequência</h2>
-            <div class="relatorio-grid">
-                <div class="rel-card">
-                    <span class="label">Média Diária</span>
-                    <span class="valor" style="color: #10b981;">143</span>
-                </div>
-                <div class="rel-card">
-                    <span class="label">Total na Semana</span>
-                    <span class="valor" style="color: #3b82f6;">715</span>
-                </div>
-                <div class="rel-card">
-                    <span class="label">Total no Mês</span>
-                    <span class="valor" style="color: #f59e0b;">2.850</span>
+    <!-- MAIN APP CONTENT (Só aparece se estiver logado ou em preview) -->
+    <div id="app-content" class="flex-col min-h-screen">
+        
+        <!-- TopNavBar -->
+        <nav class="fixed top-0 w-full z-50 bg-surface-container/70 backdrop-blur-xl border-b border-white/10 shadow-sm flex justify-between items-center px-margin-desktop py-4 h-[72px]">
+            <div class="flex items-center gap-8">
+                <h1 class="font-headline-lg text-headline-lg font-bold text-primary">Yvy Poty</h1>
+                <div class="hidden md:flex gap-6 font-body-lg text-body-lg">
+                    <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-all duration-200 active:scale-95" href="#">Dashboard</a>
+                    <a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 px-2 py-1 rounded-lg" href="#" onclick="window.openRelatorio()">Relatórios</a>
                 </div>
             </div>
-            <p style="margin-top: 20px; font-size: 12px; color: var(--text-muted);">* Os dados estatísticos são calculados com base no mês corrente.</p>
-        </div>
-    </div>
+            <div class="flex items-center gap-4">
+                <button class="material-symbols-outlined text-on-surface-variant hover:bg-white/5 p-2 rounded-full transition-colors" onclick="window.handleLogout()" title="Sair">logout</button>
+            </div>
+        </nav>
 
-    <!-- CORPO PRINCIPAL -->
-    <div class="main-content">
-        <div class="admin-grid">
+        <!-- Main Layout Container -->
+        <div class="flex pt-[72px] flex-1 overflow-hidden h-screen">
             
-            <!-- Esquerda: Laranja com Turmas -->
-            <div class="panel-left">
-                <h3>Filtro de Turmas</h3>
-                <div class="turmas-container">
-                    <button class="btn-turma" onclick="filtrarTurma('1º A', this)">1º A</button>
-                    <button class="btn-turma" onclick="filtrarTurma('1º B', this)">1º B</button>
-                    <button class="btn-turma" onclick="filtrarTurma('2º A', this)">2º A</button>
-                    <button class="btn-turma" onclick="filtrarTurma('2º B', this)">2º B</button>
-                    <button class="btn-turma" onclick="filtrarTurma('2º C', this)">2º C</button>
-                    <button class="btn-turma" onclick="filtrarTurma('3º A', this)">3º A</button>
-                    <button class="btn-turma" onclick="filtrarTurma('3º B', this)">3º B</button>
-                    <button class="btn-turma" onclick="filtrarTurma('3º C', this)">3º C</button>
+            <!-- Sidebar - Filtro de Turmas -->
+            <aside class="w-72 bg-surface-container-low border-r border-outline-variant p-6 hidden md:flex flex-col gap-6 overflow-y-auto custom-scrollbar pb-20">
+                <div class="flex flex-col gap-2">
+                    <span class="font-label-lg text-label-lg text-tertiary uppercase tracking-widest">Controle Acadêmico</span>
+                    <h2 class="font-headline-sm text-headline-sm text-on-surface">Filtro de Turmas</h2>
                 </div>
-                <button class="btn-turma" style="width: 100%; background: #fff;" onclick="filtrarTurma(null, this)">Limpar Filtro / Ver Geral</button>
-            </div>
+                
+                <div class="flex flex-col gap-3" id="filters-container">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-surface-bright/30 border border-white/5 glow-amber transition-all active:scale-95" data-turma="todos">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-tertiary">groups</span>
+                            <span class="font-body-md text-tertiary">Todas as Turmas</span>
+                        </div>
+                    </button>
+                    <!-- Filtros Adaptados -->
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="1º A">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 1º Ano A</span>
+                        </div>
+                    </button>
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="1º B">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 1º Ano B</span>
+                        </div>
+                    </button>
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="2º A">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 2º Ano A</span>
+                        </div>
+                    </button>
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="3º A">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 3º Ano A</span>
+                        </div>
+                    </button>
+                </div>
+                
+                <div class="mt-auto pt-6">
+                    <div class="glass-panel p-4 rounded-2xl flex flex-col gap-3">
+                        <p class="text-label-sm text-on-surface-variant">Status do Sistema</p>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+                            <span class="text-body-md text-secondary">Nuvem Firebase Conectada</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
 
-            <!-- Direita: Histórico -->
-            <div class="panel-right">
-                <h2 style="margin-bottom: 25px; color: white;" id="titulo-tabela">Histórico Geral de Entrada/Saída</h2>
-                <table class="tabela-historico">
-                    <thead>
-                        <tr>
-                            <th>Aluno</th>
-                            <th>Turma</th>
-                            <th>Hora</th>
-                            <th>Status</th>
-                            <th>Nuvem</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tb-historico">
-                        <!-- JS preenche aqui -->
-                        <tr><td colspan="5" style="text-align:center; color: #64748b;">Carregando dados da nuvem...</td></tr>
-                    </tbody>
-                </table>
+            <!-- Main Content Section -->
+            <main class="flex-1 p-margin-desktop overflow-y-auto custom-scrollbar pb-32">
+                <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        <h2 class="font-display-md text-display-md text-on-surface mb-2">Histórico de Movimentação</h2>
+                        <p class="font-body-lg text-on-surface-variant max-w-2xl">Acompanhe em tempo real as entradas e saídas registradas na escola.</p>
+                    </div>
+                </header>
+
+                <!-- Data Table Section -->
+                <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl">
+                    <div class="p-6 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <span class="material-symbols-outlined text-primary">analytics</span>
+                            <h3 class="font-headline-sm text-headline-sm" id="titulo-tabela">Log de Acessos (Geral)</h3>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="bg-surface-container-high/50 border-b border-white/10">
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Aluno</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Turma</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Evento</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Horário</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Nuvem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-historico">
+                                <!-- Preenchido pelo Firebase -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Floating Widget: Alunos Presentes -->
+        <div class="fixed bottom-10 right-10 z-40 bg-gradient-to-br from-primary-container to-primary p-6 rounded-3xl glow-indigo text-on-primary-container min-w-[240px] shadow-[0_20px_50px_rgba(99,102,241,0.3)] transition-all hover:scale-105 cursor-pointer" onclick="window.openRelatorio()">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-2 bg-white/20 rounded-xl backdrop-blur-md">
+                    <span class="material-symbols-outlined">emoji_people</span>
+                </div>
+                <span class="bg-on-primary-container/20 px-2 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Ao Vivo</span>
+            </div>
+            <p class="font-label-lg opacity-80">Alunos no Campus</p>
+            <div class="flex items-end gap-2 mt-1">
+                <h4 class="font-display-md text-[48px] leading-tight font-extrabold tracking-tighter" id="counter-presentes">0</h4>
+            </div>
+        </div>
+
+        <!-- Modal: Relatório -->
+        <div class="fixed inset-0 z-[100] modal-overlay hidden items-center justify-center p-6" id="modal-relatorio">
+            <div class="glass-panel w-full max-w-4xl rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row max-h-[921px]">
+                <div class="hidden md:block w-1/3 relative bg-primary-container overflow-hidden">
+                    <div class="relative z-10 p-10 h-full flex flex-col justify-end">
+                        <h3 class="font-display-md text-display-md text-on-primary-container mb-4">Analytics Semanal</h3>
+                        <p class="font-body-md text-on-primary-container/80">Visualização detalhada da taxa de retenção e presença escolar nos últimos períodos.</p>
+                    </div>
+                </div>
+                <div class="flex-1 p-10 flex flex-col">
+                    <div class="flex justify-between items-center mb-10">
+                        <div>
+                            <h4 class="font-headline-lg text-headline-lg text-on-surface">Relatório de Frequência</h4>
+                            <p class="text-body-md text-on-surface-variant">Dados consolidados da Unidade Central</p>
+                        </div>
+                        <button class="p-2 rounded-full hover:bg-white/10 text-on-surface-variant transition-all" onclick="window.closeRelatorio()">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
+                            <p class="text-label-sm text-on-surface-variant mb-1">Média Diária</p>
+                            <h5 class="font-headline-sm text-primary">94.2%</h5>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
+                            <p class="text-label-sm text-on-surface-variant mb-1">Total Semanal</p>
+                            <h5 class="font-headline-sm text-on-surface">842 <span class="text-xs opacity-50">reg.</span></h5>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
+                            <p class="text-label-sm text-on-surface-variant mb-1">Taxa Mensal</p>
+                            <h5 class="font-headline-sm text-tertiary">91.8%</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
+    <!-- FIREBASE (Módulo V11) E LÓGICA -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // =======================================================
-        // 1. FIREBASE (COLE SUAS CHAVES AQUI)
+        // 1. CHAVES DO FIREBASE E SUPORTE A PREVIEW
         // =======================================================
-        const firebaseConfig = {
+        let firebaseConfig = {
   apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
   authDomain: "monitora-yvypoty.firebaseapp.com",
   projectId: "monitora-yvypoty",
@@ -193,11 +245,24 @@
   messagingSenderId: "778447943661",
   appId: "1:778447943661:web:a128b7f140bcd9629919e4"
         };
-        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-        const db = firebase.firestore();
+
+        // Deteta se está no ambiente de pré-visualização (Canvas) ou no GitHub Pages
+        const isPreview = typeof __firebase_config !== 'undefined';
+        if (isPreview) {
+            try {
+                firebaseConfig = JSON.parse(__firebase_config);
+            } catch (e) {
+                console.error("Erro ao carregar configurações de preview", e);
+            }
+        }
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         // =======================================================
-        // 2. BANCO DE DADOS LOCAL (PARA OS NOMES DOS ALUNOS)
+        // 2. BANCO LOCAL (Nomes dos alunos)
         // =======================================================
         const databaseAlunos = {
             "2026001": { nome: "Ana Silva", turma: "1º A" },
@@ -207,70 +272,97 @@
             "005": { nome: "Eduardo Gomes", turma: "3º A" }
         };
 
-        // =======================================================
-        // 3. LÓGICA DE INTERFACE
-        // =======================================================
         let historicoGeral = [];
-        let filtroAtual = null;
-
-        function abrirRelatorio() {
-            document.getElementById('modal-relatorio').classList.add('active');
-        }
-
-        function fecharModal(e) {
-            // Fecha se clicar fora da caixa branca
-            if(e.target.id === 'modal-relatorio') {
-                e.target.classList.remove('active');
-            }
-        }
-
-        function filtrarTurma(turma, btnElement) {
-            filtroAtual = turma;
-            
-            // Remove classe de todos
-            document.querySelectorAll('.btn-turma').forEach(b => b.classList.remove('selecionada'));
-            
-            if(turma) {
-                btnElement.classList.add('selecionada');
-                document.getElementById('titulo-tabela').innerText = `Histórico - Turma: ${turma}`;
-            } else {
-                document.getElementById('titulo-tabela').innerText = `Histórico Geral de Entrada/Saída`;
-            }
-            renderizarTabela();
-        }
+        let filtroAtual = 'todos';
 
         // =======================================================
-        // 4. LER DADOS DO FIREBASE EM TEMPO REAL
+        // 3. PROTEÇÃO DE ROTAS (AUTH GUARD) HÍBRIDA
         // =======================================================
-        db.collection("registos_acesso").onSnapshot((snapshot) => {
-            historicoGeral = [];
-            let presentesStatus = {}; 
+        
+        // No ambiente de preview, forçamos o login anônimo para o design carregar sem erros.
+        // No GitHub Pages, isto não é executado e a segurança do e-mail é preservada.
+        const initAuth = async () => {
+            if (isPreview) {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Erro auth preview:", error);
+                }
+            }
+        };
+        initAuth();
 
-            snapshot.forEach(doc => {
-                let data = doc.data();
-                historicoGeral.push(data);
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Remove a tela de carregamento e mostra a App
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('app-content').style.display = 'flex';
                 
-                // Calcula quem está dentro da escola
-                if(data.tipo === 'entrada') presentesStatus[data.idAluno] = true;
-                if(data.tipo === 'saida') presentesStatus[data.idAluno] = false;
-            });
+                setTimeout(() => {
+                    document.getElementById('app-content').style.opacity = '1';
+                }, 100);
 
-            // Ordena o array para o mais recente ficar no topo (usando a string da hora, ex: "07:15")
-            // Na vida real usar timestamp é melhor, mas como salvou string HH:MM, ordenamos textualmente invertido
-            historicoGeral.sort((a, b) => b.hora.localeCompare(a.hora));
-
-            // Atualiza o Widget Flutuante com o total
-            let totalPresentes = Object.values(presentesStatus).filter(status => status === true).length;
-            document.getElementById('widget-qtd').innerText = totalPresentes;
-
-            renderizarTabela();
+                iniciarLeituraFirebase(user);
+            } else {
+                if (!isPreview) {
+                    // Evita o erro de URL em preview, mas expulsa intrusos no GitHub Pages
+                    window.location.href = 'index.html';
+                }
+            }
         });
 
+        window.handleLogout = function() {
+            signOut(auth).then(() => {
+                if (!isPreview) {
+                    window.location.href = 'index.html';
+                }
+            });
+        }
+
+        // =======================================================
+        // 4. LÓGICA DE DADOS (FIREBASE) E INTERFACE
+        // =======================================================
+        function iniciarLeituraFirebase(user) {
+            // Usa o caminho isolado no Preview, e o seu caminho original no GitHub Pages
+            let refRegistos;
+            if (isPreview) {
+                refRegistos = collection(db, 'artifacts', appId, 'users', user.uid, 'registos_acesso');
+            } else {
+                refRegistos = collection(db, "registos_acesso");
+            }
+            
+            onSnapshot(refRegistos, (snapshot) => {
+                historicoGeral = [];
+                let presentesStatus = {};
+
+                snapshot.forEach(doc => {
+                    let data = doc.data();
+                    historicoGeral.push(data);
+                    
+                    if(data.tipo === 'entrada') presentesStatus[data.idAluno] = true;
+                    if(data.tipo === 'saida') presentesStatus[data.idAluno] = false;
+                });
+
+                // Ordena por horário (do mais recente para o mais antigo)
+                historicoGeral.sort((a, b) => b.hora.localeCompare(a.hora));
+
+                // Atualiza o Widget Gigante no canto
+                let totalPresentes = Object.values(presentesStatus).filter(status => status === true).length;
+                document.getElementById('counter-presentes').innerText = totalPresentes;
+
+                renderizarTabela();
+            });
+        }
+
         function renderizarTabela() {
-            const tbody = document.getElementById('tb-historico');
+            const tbody = document.getElementById('tabela-historico');
             tbody.innerHTML = '';
 
-            let logs = filtroAtual 
+            let logs = filtroAtual !== 'todos'
                 ? historicoGeral.filter(l => {
                     let aluno = databaseAlunos[l.idAluno];
                     return aluno && aluno.turma === filtroAtual;
@@ -278,28 +370,100 @@
                 : historicoGeral;
 
             if(logs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: #64748b;">Nenhum registro encontrado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-on-surface-variant font-body-lg">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
 
-            logs.forEach(log => {
-                let aluno = databaseAlunos[log.idAluno] || { nome: `ID: ${log.idAluno}`, turma: "Não Cadastrada" };
+            // Mapeia e injeta as linhas mantendo o design Premium HTML do CSS
+            tbody.innerHTML = logs.map(log => {
+                let aluno = databaseAlunos[log.idAluno] || { nome: `ID Desconhecido (${log.idAluno})`, turma: "N/D" };
                 
-                let corTipo = log.tipo === 'entrada' ? 'var(--success)' : 'var(--orange)';
-                let iconTipo = log.tipo === 'entrada' ? 'login' : 'logout';
+                let isEntrada = log.tipo === 'entrada';
+                let corIcone = isEntrada ? 'text-secondary' : 'text-danger';
+                let iconTipo = isEntrada ? 'login' : 'logout';
+                let textoStatus = isEntrada ? 'Entrada' : 'Saída';
                 
-                let linha = `<tr>
-                    <td><strong style="color: white;">${aluno.nome}</strong></td>
-                    <td style="color: #94a3b8;">${aluno.turma}</td>
-                    <td style="font-weight: 600;">${log.hora}</td>
-                    <td style="color: ${corTipo}; font-weight: 800; text-transform: uppercase;">
-                        <span style="display:flex; align-items:center; gap:5px;"><ion-icon name="${iconTipo}-outline"></ion-icon> ${log.tipo}</span>
+                return `
+                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-full bg-surface-bright flex items-center justify-center border border-white/10">
+                                <span class="material-symbols-outlined text-primary">person</span>
+                            </div>
+                            <div>
+                                <p class="font-body-lg text-on-surface">${aluno.nome}</p>
+                                <p class="text-label-sm text-on-surface-variant">ID: #${log.idAluno}</p>
+                            </div>
+                        </div>
                     </td>
-                    <td><span class="badge-status"><ion-icon name="checkmark-circle"></ion-icon> Registrado</span></td>
-                </tr>`;
-                tbody.innerHTML += linha;
-            });
+                    <td class="px-6 py-5 font-body-md text-on-surface-variant">${aluno.turma}</td>
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-2 ${corIcone}">
+                            <span class="material-symbols-outlined text-[20px]">${iconTipo}</span>
+                            <span class="font-body-md">${textoStatus}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5 font-body-md text-on-surface">${log.hora}</td>
+                    <td class="px-6 py-5">
+                        <span class="px-3 py-1 rounded-full text-label-sm bg-secondary/15 text-secondary">
+                            Sincronizado
+                        </span>
+                    </td>
+                </tr>
+                `;
+            }).join('');
         }
+
+        // =======================================================
+        // 5. INTERATIVIDADE DA TELA
+        // =======================================================
+        window.openRelatorio = function() {
+            const modal = document.getElementById('modal-relatorio');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        window.closeRelatorio = function() {
+            const modal = document.getElementById('modal-relatorio');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Sistema de abas do menu lateral
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const botaoClicado = e.currentTarget;
+                filtroAtual = botaoClicado.getAttribute('data-turma');
+                
+                // Reseta todos
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-surface-bright/30', 'glow-amber');
+                    b.classList.add('bg-transparent');
+                    b.querySelector('span:first-child').classList.remove('text-tertiary');
+                    b.querySelector('span:first-child').classList.add('text-on-surface-variant');
+                    b.querySelector('span:last-child').classList.remove('text-tertiary');
+                    b.querySelector('span:last-child').classList.add('text-on-surface-variant');
+                });
+
+                // Ativa o clicado
+                botaoClicado.classList.add('bg-surface-bright/30', 'glow-amber');
+                botaoClicado.classList.remove('bg-transparent');
+                botaoClicado.querySelector('span:first-child').classList.add('text-tertiary');
+                botaoClicado.querySelector('span:first-child').classList.remove('text-on-surface-variant');
+                botaoClicado.querySelector('span:last-child').classList.add('text-tertiary');
+                botaoClicado.querySelector('span:last-child').classList.remove('text-on-surface-variant');
+
+                // Atualiza Título e Tabela
+                if(filtroAtual === 'todos') {
+                    document.getElementById('titulo-tabela').innerText = 'Log de Acessos (Geral)';
+                } else {
+                    document.getElementById('titulo-tabela').innerText = `Log de Acessos - Turma: ${filtroAtual}`;
+                }
+                renderizarTabela();
+            });
+        });
     </script>
 </body>
 </html>

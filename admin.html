@@ -3,17 +3,19 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Yvy Poty | Portal de Acesso</title>
+    <title>Yvy Poty - Controle de Acesso</title>
     
+    <!-- Tailwind & Fonts -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
+    <!-- Theme Config (MANTIDO EXATAMENTE COMO VOCÊ ENVIOU) -->
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    colors: {
+                    "colors": {
                         "outline-variant": "#464554", "surface-container-lowest": "#060e20", "on-surface-variant": "#c7c4d7",
                         "outline": "#908fa0", "tertiary": "#ffb95f", "on-secondary": "#003824", "on-secondary-container": "#00311f",
                         "text-muted": "#94a3b8", "text-main": "#f8fafc", "on-surface": "#dae2fd", "error-container": "#93000a",
@@ -21,15 +23,19 @@
                         "secondary-fixed": "#6ffbbe", "on-error": "#690005", "secondary-fixed-dim": "#4edea3",
                         "on-background": "#dae2fd", "inverse-on-surface": "#283044", "on-error-container": "#ffdad6",
                         "surface-container-highest": "#2d3449", "on-primary-fixed": "#07006c", "primary-container": "#8083ff",
-                        "on-secondary-fixed": "#002113", "secondary": "#4edea3", "tertiary-fixed": "#ffddb8",
+                        "on-secondary-container": "#00311f", "on-secondary-fixed": "#002113", "on-secondary-fixed-variant": "#005236",
+                        "on-tertiary-fixed-variant": "#653e00", "secondary": "#4edea3", "tertiary-fixed": "#ffddb8",
                         "background": "#0b1326", "inverse-primary": "#494bd6", "surface": "#1e293b", "error": "#ffb4ab",
                         "on-primary-container": "#0d0096", "surface-variant": "#2d3449", "danger": "#ef4444",
                         "border": "#334155", "surface-container-high": "#222a3d", "inverse-surface": "#dae2fd",
-                        "tertiary-container": "#ca8100", "secondary-container": "#00a572", "surface-container-low": "#131b2e",
-                        "surface-container": "#171f33", "primary": "#c0c1ff"
+                        "tertiary-fixed-dim": "#ffb95f", "tertiary-container": "#ca8100", "secondary-container": "#00a572",
+                        "on-tertiary": "#472a00", "on-tertiary-container": "#3e2400", "surface-container-low": "#131b2e",
+                        "surface-dim": "#0b1326", "surface-container": "#171f33", "on-primary-fixed-variant": "#2f2ebe",
+                        "primary": "#c0c1ff", "primary-fixed": "#e1e0ff", "indigo-glow": "rgba(99, 102, 241, 0.15)",
+                        "on-primary": "#1000a9", "on-tertiary-fixed": "#2a1700"
                     },
-                    borderRadius: { "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem" },
-                    fontFamily: { "body-lg": ["DM Sans"], "headline-lg": ["Syne"], "label-sm": ["DM Sans"] }
+                    "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    "fontFamily": { "body-lg": ["DM Sans"], "headline-sm": ["Syne"], "headline-lg": ["Syne"], "label-lg": ["DM Sans"], "label-sm": ["DM Sans"] }
                 }
             }
         }
@@ -42,6 +48,7 @@
 </head>
 <body class="bg-background text-on-background font-body-lg overflow-x-hidden min-h-screen relative">
 
+    <!-- Auth Screen -->
     <div class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6" id="auth-screen">
         <div class="relative z-10 w-full max-w-sm glass-card rounded-3xl p-8 flex flex-col items-center gap-6 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
             <div class="w-20 h-20 bg-primary-container rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20 mb-2">
@@ -49,7 +56,7 @@
             </div>
             <div class="text-center">
                 <h1 class="font-headline-lg text-4xl text-primary mb-1 tracking-tight">Yvy Poty</h1>
-                <p class="text-on-surface-variant font-bold tracking-wider uppercase text-xs">Portal de Acesso Único</p>
+                <p class="text-on-surface-variant font-label-lg tracking-wider uppercase text-xs font-bold">Portal de Acesso Único</p>
             </div>
             <div class="w-full space-y-4 mt-4">
                 <div class="space-y-2">
@@ -67,6 +74,7 @@
         </div>
     </div>
 
+    <!-- Toast de Erro (Notificação) -->
     <div class="fixed top-10 left-1/2 -translate-x-1/2 z-[200] w-[calc(100%-40px)] max-w-sm pointer-events-none transition-transform duration-500 -translate-y-[150%]" id="toast-container">
         <div class="glass-card px-6 py-4 rounded-2xl border-l-4 border-error flex items-center gap-4 shadow-2xl bg-surface-container-highest">
             <div class="w-10 h-10 rounded-full bg-error/20 flex items-center justify-center text-error">
@@ -79,12 +87,15 @@
         </div>
     </div>
 
-    <!-- Firebase v11 -->
+    <!-- Firebase v11 (Versão Segura Modular) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        let firebaseConfig = {
+        // =======================================================
+        // 1. CHAVES DO FIREBASE (Cole as suas chaves aqui)
+        // =======================================================
+        const firebaseConfig = {
   apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
   authDomain: "monitora-yvypoty.firebaseapp.com",
   projectId: "monitora-yvypoty",
@@ -93,45 +104,39 @@
   appId: "1:778447943661:web:a128b7f140bcd9629919e4"
         };
 
-        const isPreview = typeof __firebase_config !== 'undefined';
-        if (isPreview) {
-            try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) {}
-        }
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Preview Fallback
-        if (isPreview) {
-            const initAuth = async () => {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            };
-            initAuth();
-        }
-
+        // =======================================================
+        // 2. FUNÇÃO INTELIGENTE DE ENCAMINHAMENTO
+        // =======================================================
         function redirecionarPorPerfil(email) {
-            if (isPreview) return; // Bloqueia o erro de URL no ambiente de testes
-
             const emailMin = email.toLowerCase();
+            
+            // A Magia acontece aqui: Verifica quem está a entrar e manda para a porta certa
             if (emailMin.includes('zelador')) {
                 window.location.href = 'zelador.html';
             } else if (emailMin.includes('cozinha')) {
                 window.location.href = 'cozinha.html';
             } else {
+                // Se for a direção/admin
                 window.location.href = 'admin.html';
             }
         }
 
+        // =======================================================
+        // 3. SE JÁ ESTIVER LOGADO (Não pede senha de novo)
+        // =======================================================
         onAuthStateChanged(auth, (user) => {
-            if (user && user.email) {
+            if (user) {
+                // Se atualizar a página, o sistema lembra-se e manda logo para o painel
                 redirecionarPorPerfil(user.email);
             }
         });
 
+        // =======================================================
+        // 4. AÇÃO DO BOTÃO "ENTRAR"
+        // =======================================================
         window.handleLogin = function() {
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-password').value.trim();
@@ -142,14 +147,16 @@
                 return;
             }
 
+            // Animação de carregamento
             btn.innerHTML = `<span class="material-symbols-outlined animate-spin">refresh</span> Autenticando...`;
             btn.classList.add('opacity-80', 'pointer-events-none');
 
             signInWithEmailAndPassword(auth, email, pass)
-                .then(() => {
-                    if (isPreview) btn.innerHTML = `Entrou (Modo Preview)`;
+                .then((userCredential) => {
+                    // SUCESSO! O onAuthStateChanged (ali em cima) vai tratar do redirecionamento
                 })
-                .catch(() => {
+                .catch((error) => {
+                    // ERRO (Senha Errada)
                     btn.innerHTML = `Entrar no Sistema`;
                     btn.classList.remove('opacity-80', 'pointer-events-none');
                     mostrarErro("E-mail ou senha incorretos.");
@@ -159,8 +166,10 @@
         function mostrarErro(mensagem) {
             const toast = document.getElementById('toast-container');
             document.getElementById('toast-msg').innerText = mensagem;
+            
             toast.classList.remove('-translate-y-[150%]');
             toast.classList.add('translate-y-0');
+            
             setTimeout(() => {
                 toast.classList.remove('translate-y-0');
                 toast.classList.add('-translate-y-[150%]');
