@@ -4,24 +4,39 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Yvy Poty | Painel Administrativo</title>
-    
+    <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Syne:wght@400..800&display=swap" rel="stylesheet"/>
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    
+    <!-- Theme Config -->
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    colors: {
+                    "colors": {
                         "outline-variant": "#464554", "surface-container-lowest": "#060e20", "on-surface-variant": "#c7c4d7",
-                        "tertiary": "#ffb95f", "text-main": "#f8fafc", "on-surface": "#dae2fd",
-                        "surface-bright": "#2d3449", "primary-container": "#8083ff", "secondary": "#4edea3", 
-                        "background": "#0b1326", "surface": "#1e293b", "danger": "#ef4444", "surface-container-high": "#222a3d",
-                        "surface-container-low": "#131b2e", "primary": "#c0c1ff"
+                        "outline": "#908fa0", "tertiary": "#ffb95f", "on-secondary": "#003824", "on-secondary-container": "#00311f",
+                        "text-muted": "#94a3b8", "text-main": "#f8fafc", "on-surface": "#dae2fd", "error-container": "#93000a",
+                        "surface-bright": "#2d3449", "surface-tint": "#c0c1ff", "primary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed": "#6ffbbe", "on-error": "#690005", "secondary-fixed-dim": "#4edea3",
+                        "on-background": "#dae2fd", "inverse-on-surface": "#283044", "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#2d3449", "on-primary-fixed": "#07006c", "primary-container": "#8083ff",
+                        "on-primary-container": "#0d0096", "surface-variant": "#2d3449", "danger": "#ef4444",
+                        "border": "#334155", "surface-container-high": "#222a3d", "inverse-surface": "#dae2fd",
+                        "tertiary-fixed-dim": "#ffb95f", "tertiary-container": "#ca8100", "secondary-container": "#00a572",
+                        "on-tertiary": "#472a00", "on-tertiary-container": "#3e2400", "surface-container-low": "#131b2e",
+                        "surface-dim": "#0b1326", "surface-container": "#171f33", "on-primary-fixed-variant": "#2f2ebe",
+                        "primary": "#c0c1ff", "primary-fixed": "#e1e0ff", "indigo-glow": "rgba(99, 102, 241, 0.15)",
+                        "on-primary": "#1000a9", "on-tertiary-fixed": "#2a1700"
                     },
-                    fontFamily: { "body-lg": ["DM Sans"], "headline-sm": ["Syne"], "display-md": ["Syne"], "label-sm": ["DM Sans"] }
+                    "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
+                    "spacing": { "base": "8px", "sm": "12px", "xl": "48px", "margin-mobile": "16px", "margin-desktop": "40px", "gutter": "24px", "md": "24px", "xs": "4px", "lg": "32px" },
+                    "fontFamily": { "body-lg": ["DM Sans"], "headline-sm": ["Syne"], "display-md": ["Syne"], "label-lg": ["DM Sans"], "label-sm": ["DM Sans"], "body-md": ["DM Sans"], "headline-lg": ["Syne"] }
                 }
             }
         }
@@ -35,95 +50,140 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .active-nav-link { border-bottom: 2px solid #c0c1ff; color: #c0c1ff; font-weight: 700; }
         .modal-overlay { background: rgba(6, 14, 32, 0.85); backdrop-filter: blur(40px); }
+        
+        /* Oculta o conteúdo até autenticar */
         #app-content { display: none; opacity: 0; transition: opacity 0.5s ease; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
+    <!-- Tela de Carregamento Seguro -->
     <div id="loading-screen" class="fixed inset-0 z-[200] bg-surface-container-lowest flex flex-col items-center justify-center">
         <span class="material-symbols-outlined text-6xl text-primary animate-spin mb-4">refresh</span>
         <h2 class="font-display-md text-xl text-primary">A verificar credenciais...</h2>
     </div>
 
-    <div id="app-content" class="flex-col min-h-screen">
-        <nav class="fixed top-0 w-full z-50 bg-surface-container/70 backdrop-blur-xl border-b border-white/10 shadow-sm flex justify-between items-center px-10 py-4 h-[72px]">
+    <!-- Main Content (Só mostra após login) -->
+    <div id="app-content" class="flex flex-col flex-1">
+        
+        <!-- TopNavBar -->
+        <nav class="fixed top-0 w-full z-50 bg-surface-container/70 backdrop-blur-xl border-b border-white/10 shadow-sm flex justify-between items-center px-margin-desktop py-4 h-[72px]">
             <div class="flex items-center gap-8">
-                <h1 class="font-headline-lg text-2xl font-bold text-primary">Yvy Poty</h1>
+                <h1 class="font-headline-lg text-headline-lg font-bold text-primary">Yvy Poty</h1>
+                <div class="hidden md:flex gap-6 font-body-lg text-body-lg">
+                    <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-all duration-200 active:scale-95" href="#">Dashboard</a>
+                    <a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 px-2 py-1 rounded-lg" href="#" onclick="openRelatorio()">Relatórios</a>
+                </div>
             </div>
             <div class="flex items-center gap-4">
-                <button class="material-symbols-outlined text-on-surface-variant hover:bg-white/5 p-2 rounded-full transition-colors" onclick="window.fazerLogout()" title="Sair">logout</button>
+                <div class="relative hidden lg:block">
+                    <input class="bg-surface-container-low border border-outline-variant rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all w-64" placeholder="Pesquisar..." type="text"/>
+                    <span class="material-symbols-outlined absolute right-3 top-2 text-on-surface-variant">search</span>
+                </div>
+                <!-- Botão de Sair -->
+                <button class="material-symbols-outlined text-danger hover:bg-danger/10 p-2 rounded-full transition-colors" onclick="fazerLogout()" title="Sair do Sistema">logout</button>
+                <div class="h-10 w-10 rounded-full border border-primary/20 p-0.5 bg-surface-bright flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary">admin_panel_settings</span>
+                </div>
             </div>
         </nav>
 
+        <!-- Main Layout Container -->
         <div class="flex pt-[72px] flex-1 overflow-hidden h-screen">
-            <aside class="w-72 bg-surface-container-low border-r border-outline-variant p-6 hidden md:flex flex-col gap-6 overflow-y-auto custom-scrollbar pb-20">
+            
+            <!-- Sidebar - Filtro de Turmas -->
+            <aside class="w-72 bg-surface-container-low border-r border-outline-variant p-6 hidden md:flex flex-col gap-6 overflow-y-auto custom-scrollbar pb-24">
                 <div class="flex flex-col gap-2">
-                    <span class="font-bold text-sm text-tertiary uppercase tracking-widest">Controle Acadêmico</span>
-                    <h2 class="font-headline-sm text-xl text-on-surface">Filtro de Turmas</h2>
+                    <span class="font-label-lg text-label-lg text-tertiary uppercase tracking-widest">Controle Acadêmico</span>
+                    <h2 class="font-headline-sm text-headline-sm text-on-surface">Filtro de Turmas</h2>
                 </div>
                 
-                <div class="flex flex-col gap-3" id="filters-container">
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-surface-bright/30 border border-white/5 glow-amber transition-all active:scale-95" data-turma="todos">
+                <div class="flex flex-col gap-3">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-surface-bright/30 border border-white/5 hover:bg-surface-bright transition-all glow-amber active:scale-95" onclick="filtrarTurma('todos', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-tertiary">groups</span>
-                            <span class="font-bold text-tertiary text-sm">Todas as Turmas</span>
+                            <span class="font-body-md text-tertiary font-bold">Todas as Turmas</span>
                         </div>
                     </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="1º A">
+                    <!-- Filtros ajustados para as suas turmas -->
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="filtrarTurma('1º A', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-on-surface-variant">school</span>
-                            <span class="font-bold text-on-surface-variant text-sm">Turma 1º Ano A</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 1º Ano A</span>
                         </div>
                     </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="1º B">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="filtrarTurma('1º B', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-on-surface-variant">school</span>
-                            <span class="font-bold text-on-surface-variant text-sm">Turma 1º Ano B</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 1º Ano B</span>
                         </div>
                     </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="2º A">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="filtrarTurma('2º A', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-on-surface-variant">school</span>
-                            <span class="font-bold text-on-surface-variant text-sm">Turma 2º Ano A</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 2º Ano A</span>
                         </div>
                     </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" data-turma="3º A">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="filtrarTurma('3º A', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-on-surface-variant">school</span>
-                            <span class="font-bold text-on-surface-variant text-sm">Turma 3º Ano A</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 3º Ano A</span>
                         </div>
                     </button>
+                </div>
+                
+                <div class="mt-auto">
+                    <div class="glass-panel p-4 rounded-2xl flex flex-col gap-3">
+                        <p class="text-label-sm text-on-surface-variant">Status do Sistema</p>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+                            <span class="text-body-md text-secondary font-bold">Nuvem Conectada</span>
+                        </div>
+                    </div>
                 </div>
             </aside>
 
-            <main class="flex-1 p-10 overflow-y-auto custom-scrollbar pb-32">
-                <header class="mb-10 flex flex-col justify-between gap-6">
+            <!-- Main Content Section -->
+            <main class="flex-1 p-margin-desktop overflow-y-auto custom-scrollbar pb-32">
+                <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
-                        <h2 class="font-display-md text-3xl text-on-surface mb-2">Histórico de Movimentação</h2>
-                        <p class="text-sm text-on-surface-variant max-w-2xl">Acompanhe em tempo real as entradas e saídas registradas na escola.</p>
+                        <h2 class="font-display-md text-display-md text-on-surface mb-2">Histórico de Movimentação</h2>
+                        <p class="font-body-lg text-on-surface-variant max-w-2xl">Acompanhe em tempo real as entradas e saídas registradas via scanner biométrico e QR Code.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <button class="bg-surface-bright text-on-surface px-6 py-3 rounded-xl border border-white/10 font-label-lg flex items-center gap-2 hover:bg-surface-container transition-all">
+                            <span class="material-symbols-outlined">download</span> Exportar CSV
+                        </button>
                     </div>
                 </header>
 
+                <!-- Data Table Section -->
                 <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl">
                     <div class="p-6 border-b border-white/5 bg-white/5 flex justify-between items-center">
                         <div class="flex items-center gap-4">
                             <span class="material-symbols-outlined text-primary">analytics</span>
-                            <h3 class="font-headline-sm text-xl" id="titulo-tabela">Log de Acessos (Geral)</h3>
+                            <h3 class="font-headline-sm text-headline-sm" id="titulo-tabela">Log de Acessos (Geral)</h3>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-label-sm text-on-surface-variant">Data:</span>
+                            <span class="font-label-lg text-on-surface" id="data-hoje">--</span>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead>
                                 <tr class="bg-surface-container-high/50 border-b border-white/10">
-                                    <th class="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase">Aluno</th>
-                                    <th class="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase">Turma</th>
-                                    <th class="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase">Evento</th>
-                                    <th class="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase">Horário</th>
-                                    <th class="px-6 py-4 font-bold text-sm text-on-surface-variant uppercase">Status</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Aluno</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Turma</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Evento</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Horário</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-historico">
+                                <!-- Preenchido via Firebase -->
                             </tbody>
                         </table>
                     </div>
@@ -131,24 +191,99 @@
             </main>
         </div>
 
-        <div class="fixed bottom-10 right-10 z-40 bg-gradient-to-br from-primary-container to-primary p-6 rounded-3xl glow-indigo text-white min-w-[240px] shadow-[0_20px_50px_rgba(99,102,241,0.3)] transition-all hover:scale-105 cursor-pointer">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-2 bg-white/20 rounded-xl backdrop-blur-md"><span class="material-symbols-outlined">emoji_people</span></div>
-                <span class="bg-black/20 px-2 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">Ao Vivo</span>
+        <!-- Floating Widget: Alunos Presentes (REDUZIDO CONFORME PEDIDO) -->
+        <div class="fixed bottom-8 right-8 z-40 bg-gradient-to-br from-primary-container to-primary p-4 rounded-3xl glow-indigo text-on-primary-container min-w-[200px] shadow-[0_20px_50px_rgba(99,102,241,0.3)] transition-all hover:scale-105 group cursor-pointer" onclick="openRelatorio()">
+            <div class="flex items-center justify-between mb-2">
+                <div class="p-1.5 bg-white/20 rounded-xl backdrop-blur-md">
+                    <span class="material-symbols-outlined text-xl">emoji_people</span>
+                </div>
+                <span class="bg-on-primary-container/20 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider">Ao Vivo</span>
             </div>
-            <p class="font-bold text-sm opacity-80">Alunos no Campus</p>
-            <div class="flex items-end gap-2 mt-1">
-                <h4 class="font-display-md text-[48px] leading-tight font-extrabold tracking-tighter" id="counter-presentes">0</h4>
+            <p class="text-sm font-bold opacity-90 mb-1">Alunos no Campus</p>
+            <div class="flex items-end gap-2">
+                <h4 class="font-display-md text-[36px] leading-none font-extrabold tracking-tighter" id="counter-presentes">0</h4>
+            </div>
+            <div class="w-full bg-on-primary-container/10 h-1 rounded-full mt-2 overflow-hidden">
+                <div class="bg-white h-full transition-all duration-1000" style="width: 100%"></div>
             </div>
         </div>
+
+        <!-- Modal: Relatório de Frequência -->
+        <div class="fixed inset-0 z-[100] modal-overlay hidden items-center justify-center p-6" id="modal-relatorio">
+            <div class="glass-panel w-full max-w-4xl rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row max-h-[921px]">
+                <div class="hidden md:block w-1/3 relative bg-primary-container overflow-hidden">
+                    <div class="relative z-10 p-10 h-full flex flex-col justify-end">
+                        <h3 class="font-display-md text-display-md text-on-primary-container mb-4">Analytics Semanal</h3>
+                        <p class="font-body-md text-on-primary-container/80">Visualização detalhada da taxa de retenção e presença escolar nos últimos períodos.</p>
+                    </div>
+                </div>
+                <div class="flex-1 p-10 flex flex-col">
+                    <div class="flex justify-between items-center mb-10">
+                        <div>
+                            <h4 class="font-headline-lg text-headline-lg text-on-surface">Relatório de Frequência</h4>
+                            <p class="text-body-md text-on-surface-variant">Dados consolidados da Unidade Central</p>
+                        </div>
+                        <button class="p-2 rounded-full hover:bg-white/10 text-on-surface-variant transition-all" onclick="closeRelatorio()">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
+                            <p class="text-label-sm text-on-surface-variant mb-1">Média Diária</p>
+                            <h5 class="font-headline-sm text-primary">94.2%</h5>
+                            <div class="mt-2 flex items-center gap-1 text-secondary text-[11px]">
+                                <span class="material-symbols-outlined text-[14px]">trending_up</span> +2% est. anterior
+                            </div>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
+                            <p class="text-label-sm text-on-surface-variant mb-1">Total Semanal</p>
+                            <h5 class="font-headline-sm text-on-surface">842 <span class="text-xs opacity-50">reg.</span></h5>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-surface-bright border border-white/10">
+                            <p class="text-label-sm text-on-surface-variant mb-1">Taxa Mensal</p>
+                            <h5 class="font-headline-sm text-tertiary">91.8%</h5>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-label-lg text-on-surface mb-4">Desempenho por Período</p>
+                        <div class="h-48 flex items-end gap-4 pb-4">
+                            <div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-all rounded-t-lg relative group h-[60%]">
+                                <span class="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">SEG</span>
+                            </div>
+                            <div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-all rounded-t-lg relative group h-[85%]">
+                                <span class="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">TER</span>
+                            </div>
+                            <div class="flex-1 bg-primary/50 hover:bg-primary/60 transition-all rounded-t-lg relative group h-[95%]">
+                                <span class="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">QUA</span>
+                            </div>
+                            <div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-all rounded-t-lg relative group h-[70%]">
+                                <span class="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">QUI</span>
+                            </div>
+                            <div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-all rounded-t-lg relative group h-[80%]">
+                                <span class="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">SEX</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full mt-6 bg-surface-container-high py-4 rounded-2xl text-on-surface font-label-lg border border-white/5 hover:bg-surface-bright transition-all" onclick="alert('Exportando Relatório PDF...')">
+                        Baixar Relatório Completo (.PDF)
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Firebase -->
+    <!-- Firebase v11 (Scripts de Integração) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        // =======================================================
+        // 1. CHAVES DO FIREBASE
+        // =======================================================
         let firebaseConfig = {
   apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
   authDomain: "monitora-yvypoty.firebaseapp.com",
@@ -168,6 +303,9 @@
         const db = getFirestore(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
+        // =======================================================
+        // 2. BANCO LOCAL DE ALUNOS
+        // =======================================================
         const databaseAlunos = {
             "2026001": { nome: "Ana Silva", turma: "1º A" },
             "2026002": { nome: "Bruno Costa", turma: "1º B" },
@@ -179,6 +317,9 @@
         let historicoGeral = [];
         let filtroAtual = 'todos';
 
+        // =======================================================
+        // 3. SEGURANÇA E AUTH GUARD
+        // =======================================================
         if (isPreview) {
             const initAuth = async () => {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -208,9 +349,12 @@
             signOut(auth).then(() => { if (!isPreview) window.location.href = 'index.html'; });
         }
 
+        // =======================================================
+        // 4. LÓGICA DO FIREBASE E TABELAS
+        // =======================================================
         function iniciarLeituraFirebase(user) {
             if (!user) return;
-
+            
             let refRegistos = isPreview ? collection(db, 'artifacts', appId, 'public', 'data', 'registos_acesso') : collection(db, "registos_acesso");
             
             onSnapshot(refRegistos, (snapshot) => {
@@ -220,67 +364,128 @@
                 snapshot.forEach(doc => {
                     let data = doc.data();
                     historicoGeral.push(data);
+                    
                     if(data.tipo === 'entrada') presentesStatus[data.idAluno] = true;
                     if(data.tipo === 'saida') presentesStatus[data.idAluno] = false;
                 });
 
+                // Ordena por horário (do mais recente para o mais antigo)
                 historicoGeral.sort((a, b) => b.hora.localeCompare(a.hora));
-                document.getElementById('counter-presentes').innerText = Object.values(presentesStatus).filter(s => s === true).length;
+
+                // Atualiza o Widget Gigante no canto
+                let totalPresentes = Object.values(presentesStatus).filter(s => s === true).length;
+                document.getElementById('counter-presentes').innerText = totalPresentes;
+
                 renderizarTabela();
             }, (error) => {
-                console.error("Erro de permissão ou conexão:", error);
+                console.error("Erro no Firebase:", error);
             });
         }
 
-        function renderizarTabela() {
+        window.renderizarTabela = function() {
             const tbody = document.getElementById('tabela-historico');
-            let logs = filtroAtual !== 'todos' ? historicoGeral.filter(l => (databaseAlunos[l.idAluno] || {}).turma === filtroAtual) : historicoGeral;
+            tbody.innerHTML = '';
+
+            let logs = filtroAtual !== 'todos'
+                ? historicoGeral.filter(l => {
+                    let aluno = databaseAlunos[l.idAluno];
+                    return aluno && aluno.turma === filtroAtual;
+                })
+                : historicoGeral;
 
             if(logs.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-on-surface-variant font-body-lg">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
 
+            // Injeta as linhas mantendo o design HTML intacto
             tbody.innerHTML = logs.map(log => {
                 let aluno = databaseAlunos[log.idAluno] || { nome: `ID Desconhecido (${log.idAluno})`, turma: "N/D" };
+                
                 let isEntrada = log.tipo === 'entrada';
+                let corIcone = isEntrada ? 'text-secondary' : 'text-danger';
+                let iconTipo = isEntrada ? 'login' : 'logout';
+                let textoStatus = isEntrada ? 'Entrada' : 'Saída';
+                
                 return `
                 <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 rounded-full bg-surface-bright flex items-center justify-center border border-white/10"><span class="material-symbols-outlined text-primary">person</span></div>
-                            <div><p class="font-bold text-on-surface">${aluno.nome}</p><p class="text-xs text-on-surface-variant">ID: #${log.idAluno}</p></div>
+                            <div class="h-10 w-10 rounded-full bg-surface-bright flex items-center justify-center border border-white/10">
+                                <span class="material-symbols-outlined text-primary">person</span>
+                            </div>
+                            <div>
+                                <p class="font-body-lg text-on-surface">${aluno.nome}</p>
+                                <p class="text-label-sm text-on-surface-variant">ID: #${log.idAluno}</p>
+                            </div>
                         </div>
                     </td>
-                    <td class="px-6 py-5 text-sm text-on-surface-variant">${aluno.turma}</td>
+                    <td class="px-6 py-5 font-body-md text-on-surface-variant">${aluno.turma}</td>
                     <td class="px-6 py-5">
-                        <div class="flex items-center gap-2 ${isEntrada ? 'text-secondary' : 'text-danger'}">
-                            <span class="material-symbols-outlined text-[20px]">${isEntrada ? 'login' : 'logout'}</span>
-                            <span class="font-bold text-sm">${isEntrada ? 'Entrada' : 'Saída'}</span>
+                        <div class="flex items-center gap-2 ${corIcone}">
+                            <span class="material-symbols-outlined text-[20px]">${iconTipo}</span>
+                            <span class="font-body-md">${textoStatus}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-5 text-sm text-on-surface">${log.hora}</td>
-                    <td class="px-6 py-5"><span class="px-3 py-1 rounded-full text-xs font-bold bg-secondary/15 text-secondary">Sincronizado</span></td>
-                </tr>`;
+                    <td class="px-6 py-5 font-body-md text-on-surface">${log.hora}</td>
+                    <td class="px-6 py-5">
+                        <span class="px-3 py-1 rounded-full text-label-sm bg-secondary/15 text-secondary font-bold">
+                            Sincronizado
+                        </span>
+                    </td>
+                </tr>
+                `;
             }).join('');
         }
 
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const botaoClicado = e.currentTarget;
-                filtroAtual = botaoClicado.getAttribute('data-turma');
-                document.querySelectorAll('.filter-btn').forEach(b => {
-                    b.classList.remove('bg-surface-bright/30', 'glow-amber'); b.classList.add('bg-transparent');
-                    b.querySelector('span:first-child').classList.replace('text-tertiary', 'text-on-surface-variant');
-                    b.querySelector('span:last-child').classList.replace('text-tertiary', 'text-on-surface-variant');
-                });
-                botaoClicado.classList.add('bg-surface-bright/30', 'glow-amber'); botaoClicado.classList.remove('bg-transparent');
-                botaoClicado.querySelector('span:first-child').classList.replace('text-on-surface-variant', 'text-tertiary');
-                botaoClicado.querySelector('span:last-child').classList.replace('text-on-surface-variant', 'text-tertiary');
-                document.getElementById('titulo-tabela').innerText = filtroAtual === 'todos' ? 'Log de Acessos (Geral)' : `Log de Acessos - Turma: ${filtroAtual}`;
-                renderizarTabela();
+        // =======================================================
+        // 5. INTERATIVIDADE DA TELA (MODAIS E FILTROS)
+        // =======================================================
+        window.openRelatorio = function() {
+            const modal = document.getElementById('modal-relatorio');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        window.closeRelatorio = function() {
+            const modal = document.getElementById('modal-relatorio');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+        }
+
+        window.filtrarTurma = function(turma, botaoClicado) {
+            filtroAtual = turma;
+            
+            // Reseta cores de todos os botões
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('bg-surface-bright/30', 'glow-amber');
+                b.classList.add('bg-transparent');
+                b.querySelector('span:first-child').classList.remove('text-tertiary');
+                b.querySelector('span:first-child').classList.add('text-on-surface-variant');
+                b.querySelector('span:last-child').classList.remove('text-tertiary');
+                b.querySelector('span:last-child').classList.add('text-on-surface-variant');
             });
-        });
+
+            // Ativa cores do botão clicado
+            botaoClicado.classList.add('bg-surface-bright/30', 'glow-amber');
+            botaoClicado.classList.remove('bg-transparent');
+            botaoClicado.querySelector('span:first-child').classList.add('text-tertiary');
+            botaoClicado.querySelector('span:first-child').classList.remove('text-on-surface-variant');
+            botaoClicado.querySelector('span:last-child').classList.add('text-tertiary');
+            botaoClicado.querySelector('span:last-child').classList.remove('text-on-surface-variant');
+
+            // Atualiza Título
+            if(filtroAtual === 'todos') {
+                document.getElementById('titulo-tabela').innerText = 'Log de Acessos (Geral)';
+            } else {
+                document.getElementById('titulo-tabela').innerText = `Log de Acessos - Turma: ${filtroAtual}`;
+            }
+            
+            // Re-renderiza a tabela
+            window.renderizarTabela();
+        }
     </script>
 </body>
 </html>
