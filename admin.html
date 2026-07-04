@@ -75,6 +75,8 @@
                 <div class="hidden md:flex gap-6 font-body-lg text-body-lg">
                     <a class="text-primary font-bold border-b-2 border-primary pb-1 transition-all duration-200 active:scale-95" href="#">Dashboard</a>
                     <a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 px-2 py-1 rounded-lg" href="#" onclick="window.openRelatorio()">Relatórios</a>
+                    <a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 px-2 py-1 rounded-lg" href="#">Turmas</a>
+                    <a class="text-on-surface-variant hover:text-on-surface transition-colors hover:bg-white/5 px-2 py-1 rounded-lg" href="#">Configurações</a>
                 </div>
             </div>
             <div class="flex items-center gap-4">
@@ -82,10 +84,14 @@
                     <input class="bg-surface-container-low border border-outline-variant rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-all w-64" placeholder="Pesquisar..." type="text"/>
                     <span class="material-symbols-outlined absolute right-3 top-2 text-on-surface-variant">search</span>
                 </div>
-                <!-- Botão de Sair -->
-                <button class="material-symbols-outlined text-danger hover:bg-danger/10 p-2 rounded-full transition-colors" onclick="window.fazerLogout()" title="Sair do Sistema">logout</button>
+                <button class="material-symbols-outlined text-on-surface-variant hover:bg-white/5 p-2 rounded-full transition-colors flex items-center justify-center">notifications</button>
+                <button class="material-symbols-outlined text-on-surface-variant hover:bg-white/5 p-2 rounded-full transition-colors flex items-center justify-center">settings</button>
+                
+                <!-- Botão de Sair adicionado ao Header -->
+                <button class="material-symbols-outlined text-danger hover:bg-danger/10 p-2 rounded-full transition-colors flex items-center justify-center" onclick="window.fazerLogout()" title="Sair do Sistema">logout</button>
+                
                 <div class="h-10 w-10 rounded-full border border-primary/20 p-0.5 bg-surface-bright flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary">admin_panel_settings</span>
+                    <img class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSqA38ClW-HYVOsuQdX9ljQiyXsJW8huINEYyfvcHkpTQUV9t4d101XVpAxNmbEhE72MOND8DuYjZbxyonb_QumQ9hUEJgM6UNT2KfO5qeWccJLFITP26W1F_prH_jSz-hCG5c75i05QfRUgb08BjwZAlLzW0I-7Zd6BdNRQgwJ4HMhp6H_HQ9JCLKFfO7H22RxT06KXamO8Bs1Ix8fxojumLUxWLOd7fyvFqNDKmn2YNoL0K1nprQUWIPpc1aLj7ES1smBczCo8VL" onerror="this.style.display='none'">
                 </div>
             </div>
         </nav>
@@ -100,42 +106,66 @@
                     <h2 class="font-headline-sm text-headline-sm text-on-surface">Filtro de Turmas</h2>
                 </div>
                 
-                <div class="flex flex-col gap-3">
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-surface-bright/30 border border-white/5 hover:bg-surface-bright transition-all glow-amber active:scale-95" onclick="window.filtrarTurma('todos', this)">
+                <div class="flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-2">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-surface-bright/30 border border-white/5 hover:bg-surface-bright transition-all glow-amber active:scale-95 text-center" onclick="window.filtrarTurma('todos', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-tertiary">groups</span>
                             <span class="font-body-md text-tertiary font-bold">Todas as Turmas</span>
                         </div>
                     </button>
-                    <!-- Filtros ajustados para as suas turmas -->
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('1º A', this)">
+                    <!-- MANTIDAS TODAS AS 9 TURMAS -->
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('1º Ano A', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-on-surface-variant">school</span>
                             <span class="font-body-md text-on-surface-variant">Turma 1º Ano A</span>
                         </div>
                     </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('1º B', this)">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('1º Ano B', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-on-surface-variant">school</span>
                             <span class="font-body-md text-on-surface-variant">Turma 1º Ano B</span>
                         </div>
                     </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('2º A', this)">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('2º Ano A', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-on-surface-variant">school</span>
                             <span class="font-body-md text-on-surface-variant">Turma 2º Ano A</span>
                         </div>
                     </button>
-                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('3º A', this)">
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('2º Ano B', this)">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 2º Ano B</span>
+                        </div>
+                    </button>
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('2º Ano C', this)">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 2º Ano C</span>
+                        </div>
+                    </button>
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('3º Ano A', this)">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-on-surface-variant">school</span>
                             <span class="font-body-md text-on-surface-variant">Turma 3º Ano A</span>
                         </div>
                     </button>
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('3º Ano B', this)">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 3º Ano B</span>
+                        </div>
+                    </button>
+                    <button class="filter-btn group flex items-center justify-between p-4 rounded-2xl bg-transparent border border-white/5 hover:bg-white/5 transition-all active:scale-95" onclick="window.filtrarTurma('3º Ano C', this)">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-on-surface-variant">school</span>
+                            <span class="font-body-md text-on-surface-variant">Turma 3º Ano C</span>
+                        </div>
+                    </button>
                 </div>
                 
-                <div class="mt-auto">
-                    <!-- STATUS DO SISTEMA CENTRALIZADO (Correção) -->
+                <div class="mt-auto pt-6">
+                    <!-- STATUS DO SISTEMA CENTRALIZADO (Correção Círculo Vermelho) -->
                     <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center">
                         <p class="text-label-sm text-on-surface-variant">Status do Sistema</p>
                         <div class="flex items-center justify-center gap-2">
@@ -154,8 +184,11 @@
                         <p class="font-body-lg text-on-surface-variant max-w-2xl">Acompanhe em tempo real as entradas e saídas registradas via scanner biométrico e QR Code.</p>
                     </div>
                     <div class="flex gap-4">
-                        <button class="bg-surface-bright text-on-surface px-6 py-3 rounded-xl border border-white/10 font-label-lg flex items-center gap-2 hover:bg-surface-container transition-all">
+                        <button class="bg-surface-bright text-on-surface px-6 py-3 rounded-xl border border-white/10 font-label-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-all text-center">
                             <span class="material-symbols-outlined">download</span> Exportar CSV
+                        </button>
+                        <button class="bg-primary text-on-primary px-6 py-3 rounded-xl font-label-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all glow-indigo text-center">
+                            <span class="material-symbols-outlined">add</span> Novo Registro
                         </button>
                     </div>
                 </header>
@@ -179,8 +212,9 @@
                                     <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Aluno</th>
                                     <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Turma</th>
                                     <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Evento</th>
-                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Horário</th>
-                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase">Status</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase text-center">Horário</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase text-center">Status</th>
+                                    <th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase text-right">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tabela-historico">
@@ -192,7 +226,7 @@
             </main>
         </div>
 
-        <!-- Floating Widget: Alunos Presentes (REDUZIDO E COM ARIAL) -->
+        <!-- Floating Widget: Alunos Presentes (REDUZIDO E COM ARIAL - Correção Círculo Verde) -->
         <div class="fixed bottom-6 right-6 z-40 bg-gradient-to-br from-primary-container to-primary p-4 rounded-2xl glow-indigo text-on-primary-container min-w-[180px] shadow-[0_20px_50px_rgba(99,102,241,0.3)] transition-all hover:scale-105 cursor-pointer" onclick="window.openRelatorio()">
             <div class="flex items-center justify-between mb-2">
                 <div class="p-1.5 bg-white/20 rounded-lg backdrop-blur-md">
@@ -303,14 +337,14 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         // =======================================================
-        // 2. BANCO LOCAL DE ALUNOS
+        // 2. BANCO LOCAL DE ALUNOS (Exemplo para todas as turmas)
         // =======================================================
         const databaseAlunos = {
-            "2026001": { nome: "Ana Silva", turma: "1º A" },
-            "2026002": { nome: "Bruno Costa", turma: "1º B" },
-            "003": { nome: "Carlos Sousa", turma: "2º A" },
-            "004": { nome: "Diana Lima", turma: "2º B" },
-            "005": { nome: "Eduardo Gomes", turma: "3º A" }
+            "2026001": { nome: "Ana Silva", turma: "1º Ano A" },
+            "2026002": { nome: "Bruno Costa", turma: "1º Ano B" },
+            "003": { nome: "Carlos Sousa", turma: "2º Ano A" },
+            "004": { nome: "Diana Lima", turma: "2º Ano B" },
+            "005": { nome: "Eduardo Gomes", turma: "3º Ano A" }
         };
 
         let historicoGeral = [];
@@ -372,7 +406,7 @@
                 historicoGeral.sort((a, b) => b.hora.localeCompare(a.hora));
 
                 // Atualiza o Widget Gigante no canto
-                let totalPresentes = Object.values(presentesStatus).filter(status => status === true).length;
+                let totalPresentes = Object.values(presentesStatus).filter(s => s === true).length;
                 document.getElementById('counter-presentes').innerText = totalPresentes;
 
                 renderizarTabela();
@@ -393,7 +427,7 @@
                 : historicoGeral;
 
             if(logs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-on-surface-variant font-body-lg">Nenhum registro encontrado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-on-surface-variant font-body-lg">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
 
@@ -426,11 +460,16 @@
                             <span class="font-body-md">${textoStatus}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-5 font-body-md text-on-surface">${log.hora}</td>
-                    <td class="px-6 py-5">
-                        <span class="px-3 py-1 rounded-full text-label-sm bg-secondary/15 text-secondary font-bold">
+                    <td class="px-6 py-5 font-body-md text-on-surface text-center">${log.hora}</td>
+                    <td class="px-6 py-5 text-center">
+                        <span class="px-3 py-1 rounded-full text-label-sm inline-flex items-center justify-center bg-secondary/15 text-secondary font-bold">
                             Sincronizado
                         </span>
+                    </td>
+                    <td class="px-6 py-5 text-right">
+                        <button class="p-2 rounded-lg hover:bg-surface-bright text-on-surface-variant transition-all flex items-center justify-center ml-auto">
+                            <span class="material-symbols-outlined">more_vert</span>
+                        </button>
                     </td>
                 </tr>
                 `;
@@ -463,8 +502,13 @@
                 b.classList.add('bg-transparent');
                 b.querySelector('span:first-child').classList.remove('text-tertiary');
                 b.querySelector('span:first-child').classList.add('text-on-surface-variant');
-                b.querySelector('span:last-child').classList.remove('text-tertiary');
-                b.querySelector('span:last-child').classList.add('text-on-surface-variant');
+                
+                // Botão de "Todos" tem o número, os outros não. Prevendo erros.
+                let badge = b.querySelector('span:last-child');
+                if (badge && !badge.classList.contains('text-on-surface-variant')) {
+                    badge.classList.remove('text-tertiary');
+                    badge.classList.add('text-on-surface-variant');
+                }
             });
 
             // Ativa cores do botão clicado
@@ -472,8 +516,12 @@
             botaoClicado.classList.remove('bg-transparent');
             botaoClicado.querySelector('span:first-child').classList.add('text-tertiary');
             botaoClicado.querySelector('span:first-child').classList.remove('text-on-surface-variant');
-            botaoClicado.querySelector('span:last-child').classList.add('text-tertiary');
-            botaoClicado.querySelector('span:last-child').classList.remove('text-on-surface-variant');
+            
+            let badgeClicado = botaoClicado.querySelector('span:last-child');
+            if (badgeClicado && badgeClicado.classList.contains('text-on-surface-variant')) {
+                badgeClicado.classList.add('text-tertiary');
+                badgeClicado.classList.remove('text-on-surface-variant');
+            }
 
             // Atualiza Título
             if(filtroAtual === 'todos') {
