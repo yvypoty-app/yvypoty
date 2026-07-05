@@ -297,7 +297,7 @@
                 
                 <div class="flex flex-col gap-4">
                     <label class="text-sm font-bold text-on-surface-variant">Turma Destino:</label>
-                    <select class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 text-on-surface outline-none focus:border-primary">
+                    <select id="aviso-turma" class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 text-on-surface outline-none focus:border-primary">
                         <option value="todos">Toda a Escola (Geral)</option>
                         <option value="1A">Apenas 1º Ano A</option>
                         <option value="1B">Apenas 1º Ano B</option>
@@ -305,7 +305,7 @@
                     </select>
 
                     <label class="text-sm font-bold text-on-surface-variant mt-2">Mensagem a Enviar:</label>
-                    <textarea class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 text-on-surface outline-none focus:border-primary resize-none h-32" placeholder="Ex: Senhores pais, informamos que hoje haverá reunião de pais às 18:00..."></textarea>
+                    <textarea id="aviso-texto" class="w-full bg-surface-container-low border border-outline-variant rounded-xl px-4 py-3 text-on-surface outline-none focus:border-primary resize-none h-32" placeholder="Ex: Senhores pais, informamos que hoje haverá reunião de pais às 18:00..."></textarea>
                 </div>
 
                 <button class="w-full mt-6 bg-primary text-on-primary py-4 rounded-xl font-bold transition-all hover:brightness-110 flex items-center justify-center gap-2" onclick="window.enviarMensagemGeral()">
@@ -320,7 +320,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
 
@@ -541,9 +541,34 @@
             document.getElementById('modal-mensagem').classList.remove('flex');
         }
         
-        window.enviarMensagemGeral = function() {
-            alert("Pedido de envio disparado! No futuro, este botão mandará os dados para o bot.js processar as mensagens do WhatsApp.");
-            window.closeMensagemModal();
+        window.enviarMensagemGeral = async function() {
+            const turmaDestino = document.getElementById('aviso-turma').value;
+            const textoMensagem = document.getElementById('aviso-texto').value.trim();
+
+            if (!textoMensagem) {
+                alert("Por favor, escreva a mensagem antes de enviar.");
+                return;
+            }
+
+            try {
+                // Direciona para a coleção de avisos na nuvem
+                let refAvisos = isPreview ? collection(db, 'artifacts', appId, 'public', 'data', 'avisos_gerais') : collection(db, "avisos_gerais");
+                
+                // Grava a mensagem com o status 'processado: false' para que o robô (bot.js) faça o disparo
+                await addDoc(refAvisos, {
+                    turma: turmaDestino,
+                    mensagem: textoMensagem,
+                    dataHora: new Date().toISOString(),
+                    processado: false
+                });
+
+                alert("Aviso enviado com sucesso! O robô iniciará o disparo no WhatsApp.");
+                document.getElementById('aviso-texto').value = ''; // Limpa a caixa de texto
+                window.closeMensagemModal();
+            } catch (error) {
+                console.error("Erro ao enviar aviso:", error);
+                alert("Erro ao enviar o aviso. Verifique a conexão com a internet.");
+            }
         }
 
         window.filtrarTurma = function(turma, botaoClicado) {
