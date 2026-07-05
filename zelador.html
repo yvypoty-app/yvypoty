@@ -108,7 +108,7 @@
         </main>
     </div>
 
-    <!-- Firebase v11 e Regras de Segurança -->
+    <!-- Firebase v11 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -143,16 +143,14 @@
         }
 
         onAuthStateChanged(auth, (user) => {
-            if (user) {
+            if (user || isPreview) {
                 document.getElementById('loading-screen').style.display = 'none';
                 const appContent = document.getElementById('app-content');
                 appContent.style.display = 'flex';
                 setTimeout(() => { appContent.style.opacity = '1'; }, 100);
                 iniciarCamara();
             } else {
-                if (!isPreview) {
-                    window.location.href = 'index.html'; // Se não tiver logado, joga de volta pro login!
-                }
+                window.location.href = 'index.html';
             }
         });
 
@@ -192,7 +190,12 @@
         }
 
         function iniciarCamara() {
-            const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250}, aspectRatio: 1.0 }, false);
+            const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+                fps: 10, 
+                qrbox: {width: 250, height: 250}, 
+                aspectRatio: 1.0,
+                videoConstraints: { facingMode: "environment" } // Força a abertura da Câmera Traseira
+            }, false);
             html5QrcodeScanner.render(onScanSuccess, () => {});
         }
 
@@ -209,12 +212,17 @@
 
         function enviarParaFirebase(idLido, tipoOperacao) {
             let horaFormatada = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+            let dataFormatada = new Date().toLocaleDateString('pt-BR'); // Salva a data atual (necessário para as faltas)
             
             // Corrige o destino dependendo se é preview ou github pages
             let refRegistos = isPreview ? collection(db, 'artifacts', appId, 'public', 'data', 'registos_acesso') : collection(db, "registos_acesso");
 
             addDoc(refRegistos, {
-                idAluno: idLido, tipo: tipoOperacao, hora: horaFormatada, notificado: false 
+                idAluno: idLido, 
+                tipo: tipoOperacao, 
+                hora: horaFormatada, 
+                data: dataFormatada, // Campo data adicionado
+                notificado: false 
             }).then(() => {
                 mostrarAlerta(`QR Lido: ${tipoOperacao.toUpperCase()}`);
                 adicionarAoLog3D(idLido, tipoOperacao, horaFormatada);
