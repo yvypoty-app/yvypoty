@@ -47,7 +47,6 @@
 </head>
 <body class="bg-background text-white font-body-lg min-h-screen flex flex-col overflow-hidden">
 
-    <!-- Tela de Carregamento Seguro -->
     <div id="loading-screen" class="fixed inset-0 z-[200] bg-surface-container-lowest flex flex-col items-center justify-center">
         <span class="material-symbols-outlined text-6xl text-primary animate-spin mb-4" style="font-family: 'Material Symbols Outlined'">refresh</span>
         <h2 class="font-bold text-xl text-primary">A verificar credenciais...</h2>
@@ -84,8 +83,13 @@
                 </button>
             </div>
 
+            <!-- Alteração Principal: Adicionado o Flash Overlay -->
             <section class="relative w-full max-w-sm mx-auto aspect-square overflow-hidden rounded-2xl border-2 border-outline-variant bg-surface-container-lowest shadow-[0_10px_30px_rgba(0,0,0,0.5)] shrink-0">
                 <div class="w-full h-full" id="reader"></div>
+                
+                <!-- Div que faz a tela piscar -->
+                <div id="flash-overlay" class="absolute inset-0 z-20 opacity-0 pointer-events-none transition-opacity duration-200"></div>
+                
                 <div class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
                     <div class="w-4/5 h-4/5 relative">
                         <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-secondary rounded-tl-lg" id="corner-1"></div>
@@ -108,7 +112,6 @@
         </main>
     </div>
 
-    <!-- Firebase v11 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -194,17 +197,32 @@
                 fps: 10, 
                 qrbox: {width: 250, height: 250}, 
                 aspectRatio: 1.0,
-                videoConstraints: { facingMode: "environment" } // Força a abertura da Câmera Traseira
+                videoConstraints: { facingMode: "environment" }
             }, false);
             html5QrcodeScanner.render(onScanSuccess, () => {});
         }
 
         function onScanSuccess(decodedText) {
             const agora = Date.now();
+            // Trava de 4 segundos para evitar spam do mesmo QR Code
             if (decodedText === ultimoQRLido && (agora - tempoUltimaLeitura) < 4000) return;
 
             ultimoQRLido = decodedText;
             tempoUltimaLeitura = agora;
+
+            // --- LÓGICA DE PISCAR A TELA (NOVO) ---
+            const flash = document.getElementById('flash-overlay');
+            // Cor do flash baseada no modo
+            if(modoAtual === 'entrada') {
+                flash.className = "absolute inset-0 z-20 pointer-events-none transition-opacity duration-200 bg-secondary/60 opacity-100";
+            } else {
+                flash.className = "absolute inset-0 z-20 pointer-events-none transition-opacity duration-200 bg-error/60 opacity-100";
+            }
+            
+            // Remove o flash rápido
+            setTimeout(() => {
+                flash.classList.replace('opacity-100', 'opacity-0');
+            }, 250);
 
             try { navigator.vibrate([200, 100, 200]); } catch(e){}
             enviarParaFirebase(decodedText, modoAtual);
@@ -212,16 +230,15 @@
 
         function enviarParaFirebase(idLido, tipoOperacao) {
             let horaFormatada = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-            let dataFormatada = new Date().toLocaleDateString('pt-BR'); // Salva a data atual (necessário para as faltas)
+            let dataFormatada = new Date().toLocaleDateString('pt-BR');
             
-            // Corrige o destino dependendo se é preview ou github pages
             let refRegistos = isPreview ? collection(db, 'artifacts', appId, 'public', 'data', 'registos_acesso') : collection(db, "registos_acesso");
 
             addDoc(refRegistos, {
                 idAluno: idLido, 
                 tipo: tipoOperacao, 
                 hora: horaFormatada, 
-                data: dataFormatada, // Campo data adicionado
+                data: dataFormatada, 
                 notificado: false 
             }).then(() => {
                 mostrarAlerta(`QR Lido: ${tipoOperacao.toUpperCase()}`);
@@ -240,13 +257,17 @@
             const isEntrada = tipo === 'entrada';
             const li = document.createElement('li');
             li.className = `card-3d rounded-xl p-3 flex justify-between items-center border-l-4 ${isEntrada ? 'border-[#4edea3]' : 'border-[#ffb4ab]'}`;
+            
+            // Corta o texto caso seja muito longo (previne que a tela quebre se ler links acidentalmente)
+            const idCurto = id.length > 20 ? id.substring(0, 20) + '...' : id;
+
             li.innerHTML = `
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shadow-inner">
                         <span class="material-symbols-outlined ${isEntrada ? 'text-secondary' : 'text-error'}">${isEntrada ? 'login' : 'logout'}</span>
                     </div>
-                    <div>
-                        <p class="font-bold text-white text-sm uppercase">ID: ${id}</p>
+                    <div class="overflow-hidden max-w-[150px]">
+                        <p class="font-bold text-white text-sm uppercase truncate">ID: ${idCurto}</p>
                         <p class="text-xs text-gray-400 font-medium">${tipo.toUpperCase()}</p>
                     </div>
                 </div>
