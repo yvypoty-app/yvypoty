@@ -197,7 +197,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-label-sm text-on-surface-variant">Data:</span>
-                            <span class="font-label-lg text-on-surface" id="data-hoje">--</span>
+                            <span class="font-label-lg text-on-surface text-secondary font-bold" id="data-hoje">--</span>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
@@ -283,7 +283,7 @@
                             <div class="flex-1 bg-primary/50 hover:bg-primary/60 transition-all rounded-t-lg relative group h-[95%]">
                                 <span class="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">QUA</span>
                             </div>
-                            <div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-all rounded-t-lg relative group h-[70%]">
+                            <div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-all rounded-t-lg relative group h-[60%]">
                                 <span class="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">QUI</span>
                             </div>
                             <div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-all rounded-t-lg relative group h-[80%]">
@@ -345,18 +345,20 @@
         import { getAuth, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        document.getElementById('data-hoje').innerText = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+        // MÁGICA 1: Define a data de hoje para filtrar os registos
+        const dataAtual = new Date().toLocaleDateString('pt-BR');
+        document.getElementById('data-hoje').innerText = dataAtual;
 
         // =======================================================
         // 1. CHAVES DO FIREBASE
         // =======================================================
         let firebaseConfig = {
-  apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
-  authDomain: "monitora-yvypoty.firebaseapp.com",
-  projectId: "monitora-yvypoty",
-  storageBucket: "monitora-yvypoty.firebasestorage.app",
-  messagingSenderId: "778447943661",
-  appId: "1:778447943661:web:a128b7f140bcd9629919e4"
+            apiKey: "AIzaSyBIF7sEasl6kIWZua-BO3e_sr3E3jCp6aE",
+            authDomain: "monitora-yvypoty.firebaseapp.com",
+            projectId: "monitora-yvypoty",
+            storageBucket: "monitora-yvypoty.firebasestorage.app",
+            messagingSenderId: "778447943661",
+            appId: "1:778447943661:web:a128b7f140bcd9629919e4"
         };
 
         const isPreview = typeof __firebase_config !== 'undefined';
@@ -584,7 +586,7 @@
             "2026765894509": { nome: "Jhol Vilhalva", turma: "3º Ano B" },
             "2026765894510": { nome: "Kandisnei Marques Martins", turma: "3º Ano B" },
             "2026765894511": { nome: "Kevin Da Silva", turma: "3º Ano B" },
-            "2026765894512": { nome: "Larissa Escobar Cardoso", turma: "3º Ano B" },
+            "2026765894512": { Larissa Escobar Cardoso", turma: "3º Ano B" },
             "2026765894513": { nome: "Leandro Benites Jeronimo", turma: "3º Ano B" },
             "2026765894514": { nome: "Luis Caio Da Silva Veron", turma: "3º Ano B" },
             "2026765894515": { nome: "Maielison Avalo Vilhalva", turma: "3º Ano B" },
@@ -698,18 +700,48 @@
             let refRegistos = isPreview ? collection(db, 'artifacts', appId, 'public', 'data', 'registos_acesso') : collection(db, "registos_acesso");
             
             onSnapshot(refRegistos, (snapshot) => {
-                historicoGeral = [];
+                // MÁGICA 2: Array temporário apenas para agrupar as leituras e filtrar as do dia
+                let logsTemporarios = [];
                 let presentesStatus = {};
 
                 snapshot.forEach(doc => {
                     let data = doc.data();
-                    historicoGeral.push(data);
-                    
-                    if(data.tipo === 'entrada') presentesStatus[data.idAluno] = true;
-                    if(data.tipo === 'saida') presentesStatus[data.idAluno] = false;
+                    // Só adiciona se for uma leitura feita HOJE
+                    if (data.data === dataAtual) {
+                        logsTemporarios.push(data);
+                    }
                 });
 
-                historicoGeral.sort((a, b) => b.hora.localeCompare(a.hora));
+                // Ordena os logs do dia do mais antigo para o mais recente (para organizar os duplicados)
+                logsTemporarios.sort((a, b) => a.hora.localeCompare(b.hora));
+
+                // MÁGICA 3: Filtro Inteligente de Duplicados
+                historicoGeral = [];
+                let alunosEntradaHoje = new Set();
+                let alunosSaidaHoje = new Set();
+
+                for (let log of logsTemporarios) {
+                    if (log.tipo === 'entrada') {
+                        // Se o aluno ainda não entrou hoje, adiciona ao histórico geral e marca como presente
+                        if (!alunosEntradaHoje.has(log.idAluno)) {
+                            historicoGeral.push(log);
+                            alunosEntradaHoje.add(log.idAluno);
+                            presentesStatus[log.idAluno] = true;
+                        }
+                        // Se já entrou, ele é ignorado (não entra no historicoGeral)
+                    } else if (log.tipo === 'saida') {
+                        // Se o aluno ainda não saiu hoje, adiciona ao histórico e marca como ausente
+                        if (!alunosSaidaHoje.has(log.idAluno)) {
+                            historicoGeral.push(log);
+                            alunosSaidaHoje.add(log.idAluno);
+                            presentesStatus[log.idAluno] = false;
+                        }
+                        // Se já saiu, ele é ignorado
+                    }
+                }
+
+                // Inverte a lista para que a leitura mais recente apareça sempre no topo da tabela
+                historicoGeral.reverse();
 
                 let totalPresentes = Object.values(presentesStatus).filter(s => s === true).length;
                 document.getElementById('counter-presentes').innerText = totalPresentes;
@@ -732,7 +764,7 @@
                 : historicoGeral;
 
             if(logs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-on-surface-variant font-body-lg">Nenhum registro encontrado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-on-surface-variant font-body-lg">Nenhum registro encontrado hoje.</td></tr>`;
                 return;
             }
 
