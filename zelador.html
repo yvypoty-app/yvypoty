@@ -41,7 +41,7 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #464555; border-radius: 10px; }
         .scan-line { height: 2px; width: 100%; background: linear-gradient(to right, transparent, #4edea3, transparent); position: absolute; animation: scan-line 2s linear infinite; z-index: 10; box-shadow: 0 0 10px #4edea3; }
         @keyframes scan-line { 0% { top: 0%; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
-        .toast-3d { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-150px); background: #00a572; color: white; padding: 12px 24px; border-radius: 50px; font-weight: bold; box-shadow: 0 10px 25px rgba(0,165,114,0.5), inset 0 2px 5px rgba(255,255,255,0.3); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 100; display: flex; align-items: center; gap: 8px; }
+        .toast-3d { position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-150px); background: #00a572; color: white; padding: 12px 24px; border-radius: 50px; font-weight: bold; box-shadow: 0 10px 25px rgba(0,165,114,0.5), inset 0 2px 5px rgba(255,255,255,0.3); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 100; display: flex; align-items: center; gap: 8px; text-align: center; }
         .toast-3d.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -58,11 +58,12 @@
                 <span class="material-symbols-outlined text-primary text-3xl">qr_code_scanner</span>
                 <h1 class="font-headline-md font-bold text-primary tracking-wide">Yvy Poty <span class="text-xs text-on-surface-variant font-normal uppercase">Zelador</span></h1>
             </div>
-            <div class="flex gap-2">
-                <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest transition-colors" onclick="window.toggleFullscreen()">
+            <div class="flex gap-1">
+                <!-- Botão de Tela Cheia Corrigido -->
+                <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-highest transition-colors active:scale-90" onclick="window.toggleFullscreen()" title="Tela Cheia">
                     <span class="material-symbols-outlined text-gray-400">fullscreen</span>
                 </button>
-                <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-red-500/20 transition-colors" onclick="window.fazerLogout()" title="Sair">
+                <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-red-500/20 transition-colors active:scale-90" onclick="window.fazerLogout()" title="Sair">
                     <span class="material-symbols-outlined text-red-400">logout</span>
                 </button>
             </div>
@@ -88,7 +89,7 @@
                 <div class="w-full h-full" id="reader"></div>
                 
                 <!-- Div que faz a tela piscar -->
-                <div id="flash-overlay" class="absolute inset-0 z-20 opacity-0 pointer-events-none transition-opacity duration-200"></div>
+                <div id="flash-overlay" class="absolute inset-0 z-20 opacity-0 pointer-events-none transition-opacity duration-150"></div>
                 
                 <div class="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
                     <div class="w-4/5 h-4/5 relative">
@@ -342,26 +343,6 @@
             "2026765894474": { nome: "Nicky Thai Lung Serrano Ocampos", turma: "3º Ano A" },
             "2026765894475": { nome: "Teymily Cavalheiro Siqueira", turma: "3º Ano A" },
             "2026765894476": { nome: "Zima Panã Da Silva", turma: "3º Ano A" },
-            "2026765894477": { nome: "Angel Mendes Fernandes", turma: "3º Ano A" },
-            "2026765894478": { nome: "Cleiane Gonçalves Almeida", turma: "3º Ano A" },
-            "2026765894479": { nome: "Dailson Sander Acosta Ramires", turma: "3º Ano A" },
-            "2026765894480": { nome: "Eliabe Araujo Gonçalves", turma: "3º Ano A" },
-            "2026765894481": { nome: "Flavia Fernandes", turma: "3º Ano A" },
-            "2026765894482": { nome: "Geidiely Paulo Vera", turma: "3º Ano A" },
-            "2026765894483": { nome: "Genielison Garcia", turma: "3º Ano A" },
-            "2026765894484": { nome: "Jakielison Ramires Martins", turma: "3º Ano A" },
-            "2026765894485": { nome: "Kailon Almeida Alipio", turma: "3º Ano A" },
-            "2026765894486": { nome: "Kendoli Avalo Martins", turma: "3º Ano A" },
-            "2026765894487": { nome: "Laudiene Cavalheiro Gonçalves", turma: "3º Ano A" },
-            "2026765894488": { nome: "Leidielson De Souza", turma: "3º Ano A" },
-            "2026765894489": { nome: "Liuiangui Martins Sanches", turma: "3º Ano A" },
-            "2026765894490": { nome: "Maiara Eliano", turma: "3º Ano A" },
-            "2026765894491": { nome: "Maxsuel Cavanha Cabreira", turma: "3º Ano A" },
-            "2026765894492": { nome: "Mirieli Vilhalva", turma: "3º Ano A" },
-            "2026765894493": { nome: "Nick Rock Cardoso", turma: "3º Ano A" },
-            "2026765894494": { nome: "Nicky Thai Lung Serrano Ocampos", turma: "3º Ano A" },
-            "2026765894495": { nome: "Teymily Cavalheiro Siqueira", turma: "3º Ano A" },
-            "2026765894496": { nome: "Zima Panã Da Silva", turma: "3º Ano A" },
             "2026765894497": { nome: "Alaide Martins", turma: "3º Ano B" },
             "2026765894498": { nome: "Carlito Escobar Irala", turma: "3º Ano B" },
             "2026765894499": { nome: "Cintia De Oliveira Cavanha", turma: "3º Ano B" },
@@ -390,34 +371,6 @@
             "2026765894522": { nome: "Tainara Savala Duarte", turma: "3º Ano B" },
             "2026765894523": { nome: "Valdeir Martins", turma: "3º Ano B" },
             "2026765894524": { nome: "Zuniely Vilhalva Ferreira", turma: "3º Ano B" },
-            "2026765894525": { nome: "Alaide Martins", turma: "3º Ano B" },
-            "2026765894526": { nome: "Carlito Escobar Irala", turma: "3º Ano B" },
-            "2026765894527": { nome: "Cintia De Oliveira Cavanha", turma: "3º Ano B" },
-            "2026765894528": { nome: "Daiana Avalo Mendes", turma: "3º Ano B" },
-            "2026765894529": { nome: "Deividi Barbosa Cabreira", turma: "3º Ano B" },
-            "2026765894530": { nome: "Elizandra Claro Neto", turma: "3º Ano B" },
-            "2026765894531": { nome: "Ericlel Morales De Souza", turma: "3º Ano B" },
-            "2026765894532": { nome: "Francieli Fernandes Barbosa", turma: "3º Ano B" },
-            "2026765894533": { nome: "Franquesto Ramires Mendes", turma: "3º Ano B" },
-            "2026765894534": { nome: "Gabriel Benites Oliveira", turma: "3º Ano B" },
-            "2026765894535": { nome: "Iudhy Benites", turma: "3º Ano B" },
-            "2026765894536": { nome: "Jakson Junior Arino Torres", turma: "3º Ano B" },
-            "2026765894537": { nome: "Jhol Vilhalva", turma: "3º Ano B" },
-            "2026765894538": { nome: "Kandisnei Marques Martins", turma: "3º Ano B" },
-            "2026765894539": { nome: "Kevin Da Silva", turma: "3º Ano B" },
-            "2026765894540": { nome: "Larissa Escobar Cardoso", turma: "3º Ano B" },
-            "2026765894541": { nome: "Leandro Benites Jeronimo", turma: "3º Ano B" },
-            "2026765894542": { nome: "Luis Caio Da Silva Veron", turma: "3º Ano B" },
-            "2026765894543": { nome: "Maielison Avalo Vilhalva", turma: "3º Ano B" },
-            "2026765894544": { nome: "Micharlison Martins Vera", turma: "3º Ano B" },
-            "2026765894545": { nome: "Naytiara Gonçalves Marques", turma: "3º Ano B" },
-            "2026765894546": { nome: "Rayson Cavanha Vilharva", turma: "3º Ano B" },
-            "2026765894547": { nome: "Riesley Quinhone Souza", turma: "3º Ano B" },
-            "2026765894548": { nome: "Riki Eber Franco Araujo", turma: "3º Ano B" },
-            "2026765894549": { nome: "Sheiane Acosta Cavanha", turma: "3º Ano B" },
-            "2026765894550": { nome: "Tainara Savala Duarte", turma: "3º Ano B" },
-            "2026765894551": { nome: "Valdeir Martins", turma: "3º Ano B" },
-            "2026765894552": { nome: "Zuniely Vilhalva Ferreira", turma: "3º Ano B" },
             "2026765894553": { nome: "Caio Diogo Barrios Gonçalves", turma: "3º Ano C" },
             "2026765894554": { nome: "Claiane Arce Almeida", turma: "3º Ano C" },
             "2026765894555": { nome: "Cleomar Vieira Savala", turma: "3º Ano C" },
@@ -473,44 +426,68 @@
             }
         }
 
+        // --- CORREÇÃO DO BOTÃO TELA CHEIA (Para funcionar no Android e iOS Safari PWA) ---
         window.toggleFullscreen = function() {
-            if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(()=>{}); } 
-            else { document.exitFullscreen(); }
+            let doc = document.documentElement;
+            try {
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+                    if (doc.requestFullscreen) { doc.requestFullscreen(); }
+                    else if (doc.webkitRequestFullscreen) { doc.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT); }
+                    else if (doc.mozRequestFullScreen) { doc.mozRequestFullScreen(); }
+                    else if (doc.msRequestFullscreen) { doc.msRequestFullscreen(); }
+                    else { mostrarAlerta("Tela cheia bloqueada pelo navegador deste celular.", true); }
+                } else {
+                    if (document.exitFullscreen) { document.exitFullscreen(); }
+                    else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+                    else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); }
+                    else if (document.msExitFullscreen) { document.msExitFullscreen(); }
+                }
+            } catch(e) {
+                console.log(e);
+            }
         }
 
         function iniciarCamara() {
+            // CÂMARA AGORA A 30 FPS PARA LEITURA ULTRA-RÁPIDA
             const html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-                fps: 10, 
+                fps: 30, 
                 qrbox: {width: 250, height: 250}, 
                 aspectRatio: 1.0,
-                videoConstraints: { facingMode: "environment" }
+                videoConstraints: { 
+                    facingMode: "environment"
+                }
             }, false);
             html5QrcodeScanner.render(onScanSuccess, () => {});
         }
 
         function onScanSuccess(decodedText) {
             const agora = Date.now();
-            // Trava de 4 segundos para evitar spam do mesmo QR Code
-            if (decodedText === ultimoQRLido && (agora - tempoUltimaLeitura) < 4000) return;
+            
+            // --- PROTEÇÃO ANTI-SPAM (Se ler de novo em menos de 5 seg) ---
+            if (decodedText === ultimoQRLido && (agora - tempoUltimaLeitura) < 5000) {
+                // Pisca a Vermelho forte (Erro)
+                const flash = document.getElementById('flash-overlay');
+                flash.className = "absolute inset-0 z-20 pointer-events-none transition-opacity duration-150 bg-red-600/80 opacity-100";
+                setTimeout(() => { flash.classList.replace('opacity-100', 'opacity-0'); }, 200);
+                
+                mostrarAlerta("⚠️ Este crachá já foi lido agora mesmo!", true);
+                try { navigator.vibrate([100, 50, 100]); } catch(e){}
+                return;
+            }
 
             ultimoQRLido = decodedText;
             tempoUltimaLeitura = agora;
 
-            // --- LÓGICA DE PISCAR A TELA ---
+            // --- PISCAR NORMAL (Sucesso) ---
             const flash = document.getElementById('flash-overlay');
-            // Cor do flash baseada no modo
             if(modoAtual === 'entrada') {
-                flash.className = "absolute inset-0 z-20 pointer-events-none transition-opacity duration-200 bg-secondary/60 opacity-100";
+                flash.className = "absolute inset-0 z-20 pointer-events-none transition-opacity duration-150 bg-secondary/60 opacity-100";
             } else {
-                flash.className = "absolute inset-0 z-20 pointer-events-none transition-opacity duration-200 bg-error/60 opacity-100";
+                flash.className = "absolute inset-0 z-20 pointer-events-none transition-opacity duration-150 bg-error/60 opacity-100";
             }
-            
-            // Remove o flash rápido
-            setTimeout(() => {
-                flash.classList.replace('opacity-100', 'opacity-0');
-            }, 250);
+            setTimeout(() => { flash.classList.replace('opacity-100', 'opacity-0'); }, 200);
 
-            try { navigator.vibrate([200, 100, 200]); } catch(e){}
+            try { navigator.vibrate([200]); } catch(e){} // Vibração suave de sucesso
             enviarParaFirebase(decodedText, modoAtual);
         }
 
@@ -540,9 +517,8 @@
             const empty = document.getElementById('empty-log');
             if(empty) empty.remove();
 
-            // Puxa o nome do aluno da lista baseada no ID, se não achar mostra apenas o ID
             let nomeAluno = databaseAlunos[id] ? databaseAlunos[id].nome : `Desconhecido`;
-            const idCurto = id.length > 15 ? id.substring(0, 15) + '...' : id; // caso leia lixo
+            const idCurto = id.length > 15 ? id.substring(0, 15) + '...' : id;
 
             const isEntrada = tipo === 'entrada';
             const li = document.createElement('li');
@@ -571,11 +547,17 @@
             document.getElementById('toast-msg').innerText = msg;
             
             if (isError) {
-                alerta.style.background = '#ef4444'; alerta.style.boxShadow = '0 10px 25px rgba(239,68,68,0.5)';
+                // Tema Vermelho (Alerta/Erro/Spam)
+                alerta.style.background = '#dc2626'; alerta.style.boxShadow = '0 10px 25px rgba(220,38,38,0.6)';
+                document.getElementById('toast-icon').innerText = 'warning';
             } else if(modoAtual === 'entrada') {
+                // Tema Verde (Entrada)
                 alerta.style.background = '#00a572'; alerta.style.boxShadow = '0 10px 25px rgba(0,165,114,0.5)';
+                document.getElementById('toast-icon').innerText = 'check_circle';
             } else {
+                // Tema Laranja (Saída)
                 alerta.style.background = '#ea580c'; alerta.style.boxShadow = '0 10px 25px rgba(234,88,12,0.5)';
+                document.getElementById('toast-icon').innerText = 'check_circle';
             }
             alerta.classList.add('show');
             setTimeout(() => alerta.classList.remove('show'), 2500);
